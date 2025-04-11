@@ -2,6 +2,7 @@ package main
 
 import (
 	"backend/config"
+	"backend/middleware"
 	"backend/repository"
 	"backend/routes"
 	"backend/service"
@@ -34,6 +35,10 @@ func main() {
 		service.NewBudgetPlanService(repoFactory))
 
 	router := routes.SetupRoutes(sFactory)
+
+	if err := middleware.InitJWT(); err != nil {
+		log.Fatal(err)
+	}
 
 	log.Println("Servidor rodando em :8080")
 	if err := http.ListenAndServe(":8080", router); err != nil {

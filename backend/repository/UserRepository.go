@@ -47,7 +47,7 @@ func (r *userRepository) Update(user *model.User) error {
 }
 func (r *userRepository) UpdatePassword(user *model.User) error {
 	ctx := context.Background()
-	_, err := r.db.NewUpdate().Model(user).Column("password").Where("id = ?", user.ID).Limit(1).Exec(ctx)
+	_, err := r.db.NewUpdate().Model(user).Column("password").Where("id = ?", user.ID).Exec(ctx)
 	return err
 }
 

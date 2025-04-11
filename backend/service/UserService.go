@@ -1,9 +1,11 @@
 package service
 
 import (
-	"backend/auth"
+	"backend/middleware"
 	"backend/model"
+	"backend/model/request"
 	"backend/repository"
+	"backend/util"
 	"errors"
 	"time"
 )
@@ -12,9 +14,10 @@ type UserService interface {
 	GetUserByID(id int) (*model.User, error)
 	CreateUser(user *model.User) error
 	FindByEmail(email string) (*model.User, error)
-	UpdatePassword(id int, password string) error
+	UpdatePassword(user *model.User, password string) error
 	Update(user *model.User) error
 	Delete(id int) error
+	Login(user *request.LoginRequest) (string, error)
 }
 
 type userService struct {
@@ -32,7 +35,7 @@ func (s *userService) CreateUser(user *model.User) error {
 	if uErr == nil {
 		return errors.New("email already in use")
 	}
-	newPassword, hashErr := auth.HashPassword(user.Password)
+	newPassword, hashErr := util.HashPassword(user.Password)
 	if hashErr != nil {
 		return hashErr
 	}
@@ -50,17 +53,13 @@ func (s *userService) FindByEmail(email string) (*model.User, error) {
 	return s.repository.FindByEmail(email)
 }
 
-func (s *userService) UpdatePassword(id int, password string) error {
-	u, _ := s.repository.FindByID(id)
-	if u == nil {
-		return errors.New("user not found")
-	}
-	passwordHash, hasErr := auth.HashPassword(password)
+func (s *userService) UpdatePassword(user *model.User, password string) error {
+	passwordHash, hasErr := util.HashPassword(password)
 	if hasErr != nil {
 		return hasErr
 	}
-	u.Password = passwordHash
-	err := s.repository.UpdatePassword(u)
+	user.Password = passwordHash
+	err := s.repository.UpdatePassword(user)
 	return err
 }
 
@@ -73,4 +72,19 @@ func (s *userService) Delete(id int) error {
 	return err
 }
 
-//todo authentication
+func (s *userService) Login(u *request.LoginRequest) (string, error) {
+
+	user, err := s.repository.FindByEmail(u.Email)
+	if err != nil {
+		return "", err
+	}
+	isValid := util.VerifyPassword(u.Password, user.Password)
+	if !isValid {
+		return "", errors.New("invalid email or password")
+	}
+	token, err := middleware.GenerateJWT(u.Email)
+	if err != nil {
+		return "", errors.New("error generating token")
+	}
+	return token, nil
+}
