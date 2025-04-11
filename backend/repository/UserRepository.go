@@ -8,11 +8,11 @@ import (
 
 type UserRepository interface {
 	Create(user *model.User) error
-	FindByID(id int) (*model.User, error)
+	FindByID(id string) (*model.User, error)
 	FindByEmail(email string) (*model.User, error)
 	Update(user *model.User) error
 	UpdatePassword(user *model.User) error
-	Delete(id int) error
+	Delete(id string) error
 }
 
 type userRepository struct {
@@ -28,7 +28,7 @@ func (r *userRepository) Create(user *model.User) error {
 	err := r.db.NewInsert().Model(user).Returning("*").Scan(ctx, user)
 	return err
 }
-func (r *userRepository) FindByID(id int) (*model.User, error) {
+func (r *userRepository) FindByID(id string) (*model.User, error) {
 	ctx := context.Background()
 	user := new(model.User)
 	err := r.db.NewSelect().Model(user).Where("id = ?", id).Limit(1).Scan(ctx, user)
@@ -51,7 +51,7 @@ func (r *userRepository) UpdatePassword(user *model.User) error {
 	return err
 }
 
-func (r *userRepository) Delete(id int) error {
+func (r *userRepository) Delete(id string) error {
 	ctx := context.Background()
 	_, err := r.db.NewDelete().Model(&model.User{}).Where("id = ?", id).Limit(1).Exec(ctx)
 	return err

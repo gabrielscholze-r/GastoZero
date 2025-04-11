@@ -14,6 +14,8 @@ type UserController interface {
 	FindByEmail(w http.ResponseWriter, r *http.Request)
 	Login(w http.ResponseWriter, r *http.Request)
 	UpdatePassword(w http.ResponseWriter, r *http.Request)
+	Update(w http.ResponseWriter, r *http.Request)
+	Delete(w http.ResponseWriter, r *http.Request)
 }
 type userController struct {
 	service service.UserService
@@ -125,4 +127,27 @@ func (ctrl *userController) UpdatePassword(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		return
 	}
+}
+
+func (ctrl *userController) Update(w http.ResponseWriter, r *http.Request) {
+	var user model.User
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		http.Error(w, "Invalid Body", http.StatusBadRequest)
+	}
+	err := ctrl.service.Update(&user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+
+}
+
+func (ctrl *userController) Delete(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	err := ctrl.service.Delete(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+	w.WriteHeader(http.StatusOK)
 }

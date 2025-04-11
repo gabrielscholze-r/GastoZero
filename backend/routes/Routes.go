@@ -17,6 +17,15 @@ func SetupRoutes(serviceFactory *service.ServiceBase) http.Handler {
 	r.HandleFunc("/users", userController.FindByEmail).Methods("GET")
 	r.HandleFunc("/users/login", userController.Login).Methods("POST")
 	r.HandleFunc("/users/password", middleware.JWTAuth(userController.UpdatePassword)).Methods("PUT")
+	r.HandleFunc("/users", middleware.JWTAuth(userController.Delete)).Methods("DELETE")
+	r.HandleFunc("/users", middleware.JWTAuth(userController.Update)).Methods("PUT")
+
+	categoryController := controller.NewCategoryController(serviceFactory)
+	r.HandleFunc("/category", categoryController.CreateCategory).Methods("POST")
+	r.HandleFunc("/category/id", categoryController.FindById).Methods("GET")
+	r.HandleFunc("/category/name", categoryController.FindByName).Methods("GET")
+	r.HandleFunc("/category", categoryController.Update).Methods("PUT")
+	r.HandleFunc("/category", categoryController.Delete).Methods("DELETE")
 
 	return r
 }
