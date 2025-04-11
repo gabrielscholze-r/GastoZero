@@ -21,11 +21,11 @@ func SetupRoutes(serviceFactory *service.ServiceBase) http.Handler {
 	r.HandleFunc("/users", middleware.JWTAuth(userController.Update)).Methods("PUT")
 
 	categoryController := controller.NewCategoryController(serviceFactory)
-	r.HandleFunc("/category", categoryController.CreateCategory).Methods("POST")
-	r.HandleFunc("/category/id", categoryController.FindById).Methods("GET")
-	r.HandleFunc("/category/name", categoryController.FindByName).Methods("GET")
-	r.HandleFunc("/category", categoryController.Update).Methods("PUT")
-	r.HandleFunc("/category", categoryController.Delete).Methods("DELETE")
+	r.HandleFunc("/category", middleware.JWTAuth(categoryController.CreateCategory)).Methods("POST")
+	r.HandleFunc("/category/id", middleware.JWTAuth(categoryController.FindById)).Methods("GET")
+	r.HandleFunc("/category/name", middleware.JWTAuth(categoryController.FindByName)).Methods("GET")
+	r.HandleFunc("/category", middleware.JWTAuth(categoryController.Update)).Methods("PUT")
+	r.HandleFunc("/category", middleware.JWTAuth(categoryController.Delete)).Methods("DELETE")
 
 	return r
 }
