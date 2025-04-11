@@ -131,7 +131,6 @@ func (ctrl *userController) UpdatePassword(w http.ResponseWriter, r *http.Reques
 }
 
 func (ctrl *userController) Update(w http.ResponseWriter, r *http.Request) {
-	//todo fix update to only update name and email
 	var req struct {
 		ID    int    `json:"ID"`
 		Email string `json:"email"`

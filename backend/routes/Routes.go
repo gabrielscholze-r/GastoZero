@@ -27,5 +27,19 @@ func SetupRoutes(serviceFactory *service.ServiceBase) http.Handler {
 	r.HandleFunc("/category", middleware.JWTAuth(categoryController.Update)).Methods("PUT")
 	r.HandleFunc("/category", middleware.JWTAuth(categoryController.Delete)).Methods("DELETE")
 
+	expenseController := controller.NewExpenseController(serviceFactory)
+	r.HandleFunc("/expense", middleware.JWTAuth(expenseController.NewExpense)).Methods("POST")
+	r.HandleFunc("/expense/plan", middleware.JWTAuth(expenseController.GetByPlan)).Methods("GET")
+	r.HandleFunc("/expense/category", middleware.JWTAuth(expenseController.GetByCategory)).Methods("GET")
+	r.HandleFunc("/expense", middleware.JWTAuth(expenseController.Update)).Methods("PUT")
+	r.HandleFunc("/expense", middleware.JWTAuth(expenseController.Delete)).Methods("DELETE")
+
+	budgetController := controller.NewBudgetPlanController(serviceFactory)
+	r.HandleFunc("/plan", middleware.JWTAuth(budgetController.CreatePlan)).Methods("POST")
+	r.HandleFunc("/plan/user", middleware.JWTAuth(budgetController.GetByUser)).Methods("GET")
+	r.HandleFunc("/plan", middleware.JWTAuth(budgetController.Delete)).Methods("DELETE")
+	r.HandleFunc("/plan/amount", middleware.JWTAuth(budgetController.UpdateAmount)).Methods("PUT")
+	r.HandleFunc("/plan", middleware.JWTAuth(budgetController.Update)).Methods("PUT")
+
 	return r
 }
