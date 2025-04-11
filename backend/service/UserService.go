@@ -54,6 +54,9 @@ func (s *userService) FindByEmail(email string) (*model.User, error) {
 }
 
 func (s *userService) UpdatePassword(user *model.User, password string) error {
+	if util.VerifyPassword(password, user.Password) {
+		return errors.New("please enter a different password")
+	}
 	passwordHash, hasErr := util.HashPassword(password)
 	if hasErr != nil {
 		return hasErr
