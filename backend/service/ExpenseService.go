@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-type ExpensesService interface {
+type ExpenseService interface {
 	NewExpense(expense *model.Expense) error
 	DeleteExpense(id int, plan int) error
 	GetByPlan(id int) ([]model.Expense, error)
@@ -14,21 +14,21 @@ type ExpensesService interface {
 	Update(model *model.Expense) error
 }
 
-type expensesRepository struct {
+type expenseRepository struct {
 	repository repository.ExpensesRepository
 	budget     repository.BudgetPlanRepository
 	category   repository.CategoryRepository
 }
 
-func NewExpensesService(factory *repository.RepositoryBase) ExpensesService {
-	return &expensesRepository{
+func NewExpensesService(factory *repository.RepositoryBase) ExpenseService {
+	return &expenseRepository{
 		repository: repository.GetByType[repository.ExpensesRepository](factory),
 		budget:     repository.GetByType[repository.BudgetPlanRepository](factory),
 		category:   repository.GetByType[repository.CategoryRepository](factory),
 	}
 }
 
-func (s *expensesRepository) NewExpense(expense *model.Expense) error {
+func (s *expenseRepository) NewExpense(expense *model.Expense) error {
 	b, _ := s.budget.GetByID(expense.BudgetID)
 	if &b == nil {
 		return errors.New("budget not found")
@@ -41,7 +41,7 @@ func (s *expensesRepository) NewExpense(expense *model.Expense) error {
 	return s.repository.Create(expense)
 }
 
-func (s *expensesRepository) DeleteExpense(id int, plan int) error {
+func (s *expenseRepository) DeleteExpense(id int, plan int) error {
 	bError := s.budget.DeleteExpense(plan, id)
 	if bError != nil {
 		return bError
@@ -50,14 +50,14 @@ func (s *expensesRepository) DeleteExpense(id int, plan int) error {
 	return err
 }
 
-func (s *expensesRepository) GetByPlan(id int) ([]model.Expense, error) {
+func (s *expenseRepository) GetByPlan(id int) ([]model.Expense, error) {
 	return s.repository.GetByPlan(id)
 }
 
-func (s *expensesRepository) GetByCategory(id int) ([]model.Expense, error) {
+func (s *expenseRepository) GetByCategory(id int) ([]model.Expense, error) {
 	return s.repository.GetByCategory(id)
 }
 
-func (s *expensesRepository) Update(model *model.Expense) error {
+func (s *expenseRepository) Update(model *model.Expense) error {
 	return s.repository.Update(model)
 }

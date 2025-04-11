@@ -1,14 +1,8 @@
-package model
+package request
 
-import (
-	"github.com/uptrace/bun"
-	"time"
-)
+import "time"
 
-type Expense struct {
-	bun.BaseModel `bun:"table:expenses"`
-
-	ID          int       `bun:",pk,autoincrement" json:"id"`
+type ExpenseRequest struct {
 	Amount      float64   `json:"amount"`
 	Description string    `json:"description"`
 	CategoryID  int       `json:"category_id"`

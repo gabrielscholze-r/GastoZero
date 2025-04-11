@@ -33,7 +33,6 @@ func (r *budgetPlanRepository) Create(plan *model.BudgetPlan) error {
 func (r *budgetPlanRepository) Delete(id int) error {
 	ctx := context.Background()
 
-	// Remove vínculos da tabela intermediária
 	if _, err := r.db.NewDelete().
 		Model((*model.BudgetPlanExpense)(nil)).
 		Where("budget_plan_id = ?", id).
@@ -41,7 +40,6 @@ func (r *budgetPlanRepository) Delete(id int) error {
 		return err
 	}
 
-	// Remove o plano
 	_, err := r.db.NewDelete().
 		Model(&model.BudgetPlan{}).
 		Where("id = ?", id).
@@ -54,7 +52,6 @@ func (r *budgetPlanRepository) GetByUser(userID int) ([]model.BudgetPlan, error)
 	ctx := context.Background()
 	var plans []model.BudgetPlan
 
-	// Preload dos expenses usando m2m
 	err := r.db.NewSelect().
 		Model(&plans).
 		Relation("Expenses").
@@ -65,6 +62,7 @@ func (r *budgetPlanRepository) GetByUser(userID int) ([]model.BudgetPlan, error)
 }
 
 func (r *budgetPlanRepository) UpdateAmount(id int, newAmount float64) error {
+
 	plan := &model.BudgetPlan{ID: id, TotalAmount: newAmount}
 	ctx := context.Background()
 	_, err := r.db.NewUpdate().Model(plan).Column("total_amount").Where("id = ?", id).Exec(ctx)
@@ -74,13 +72,11 @@ func (r *budgetPlanRepository) UpdateAmount(id int, newAmount float64) error {
 func (r *budgetPlanRepository) Update(plan *model.BudgetPlan) error {
 	ctx := context.Background()
 
-	// Atualiza os dados básicos
-	_, err := r.db.NewUpdate().Model(plan).Where("id = ?", plan.ID).Limit(1).Exec(ctx)
+	_, err := r.db.NewUpdate().Model(plan).Where("id = ?", plan.ID).Exec(ctx)
 	if err != nil {
 		return err
 	}
 
-	// Atualiza os vínculos de expenses: remove todos e insere novamente
 	_, err = r.db.NewDelete().
 		Model((*model.BudgetPlanExpense)(nil)).
 		Where("budget_plan_id = ?", plan.ID).
@@ -110,7 +106,6 @@ func (r *budgetPlanRepository) GetByID(id int) (*model.BudgetPlan, error) {
 		Model(plan).
 		Relation("Expenses").
 		Where("budget_plan.id = ?", id).
-		Limit(1).
 		Scan(ctx)
 	return plan, err
 }

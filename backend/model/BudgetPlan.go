@@ -12,7 +12,6 @@ type BudgetPlan struct {
 	TotalAmount   float64   `json:"totalAmount"`
 	Description   string    `json:"description"`
 	CreatedDate   time.Time `json:"startDate"`
-	User          User      `json:"-"`
 	UserID        int       `json:"userID"`
 	Expenses      []int     `json:"expenses"`
 }

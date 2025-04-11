@@ -11,6 +11,7 @@ type BudgetPlanService interface {
 	FindByUser(id int) ([]model.BudgetPlan, error)
 	Delete(id int) error
 	Update(b *model.BudgetPlan) error
+	UpdateAmount(id int, amount float64) error
 }
 type budgetPlanService struct {
 	repository repository.BudgetPlanRepository
@@ -42,4 +43,10 @@ func (s *budgetPlanService) Delete(id int) error {
 
 func (s *budgetPlanService) Update(b *model.BudgetPlan) error {
 	return s.repository.Update(b)
+}
+func (s *budgetPlanService) UpdateAmount(id int, amount float64) error {
+	if _, err := s.repository.GetByID(id); err != nil {
+		return err
+	}
+	return s.repository.UpdateAmount(id, amount)
 }

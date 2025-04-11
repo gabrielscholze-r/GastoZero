@@ -11,12 +11,12 @@ import (
 )
 
 type UserService interface {
-	GetUserByID(id string) (*model.User, error)
+	GetUserByID(id int) (*model.User, error)
 	CreateUser(user *model.User) error
 	FindByEmail(email string) (*model.User, error)
 	UpdatePassword(user *model.User, password string) error
 	Update(user *model.User) error
-	Delete(id string) error
+	Delete(id int) error
 	Login(user *request.LoginRequest) (string, error)
 }
 
@@ -45,7 +45,7 @@ func (s *userService) CreateUser(user *model.User) error {
 	return err
 }
 
-func (s *userService) GetUserByID(id string) (*model.User, error) {
+func (s *userService) GetUserByID(id int) (*model.User, error) {
 	return s.repository.FindByID(id)
 }
 
@@ -70,7 +70,7 @@ func (s *userService) Update(user *model.User) error {
 	err := s.repository.Update(user)
 	return err
 }
-func (s *userService) Delete(id string) error {
+func (s *userService) Delete(id int) error {
 	u, err := s.repository.FindByID(id)
 	if err != nil {
 		return err

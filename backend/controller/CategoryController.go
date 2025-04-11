@@ -6,6 +6,7 @@ import (
 	"backend/service"
 	"encoding/json"
 	"net/http"
+	"strconv"
 )
 
 type CategoryController interface {
@@ -43,7 +44,6 @@ func (ctrl *categoryController) CreateCategory(w http.ResponseWriter, r *http.Re
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 	w.WriteHeader(http.StatusCreated)
-	w.WriteHeader(http.StatusCreated)
 
 	if err := json.NewEncoder(w).Encode(&category); err != nil {
 		http.Error(w, "response failure: "+err.Error(), http.StatusInternalServerError)
@@ -65,8 +65,10 @@ func (ctrl *categoryController) FindByName(w http.ResponseWriter, r *http.Reques
 }
 
 func (ctrl *categoryController) FindById(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
 	category, err := ctrl.service.FindById(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -78,8 +80,11 @@ func (ctrl *categoryController) FindById(w http.ResponseWriter, r *http.Request)
 }
 
 func (ctrl *categoryController) Delete(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-	err := ctrl.service.Delete(id)
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+	err = ctrl.service.Delete(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}

@@ -7,6 +7,7 @@ import (
 	"backend/service"
 	"encoding/json"
 	"net/http"
+	"strconv"
 )
 
 type UserController interface {
@@ -130,9 +131,19 @@ func (ctrl *userController) UpdatePassword(w http.ResponseWriter, r *http.Reques
 }
 
 func (ctrl *userController) Update(w http.ResponseWriter, r *http.Request) {
-	var user model.User
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+	//todo fix update to only update name and email
+	var req struct {
+		ID    int    `json:"ID"`
+		Email string `json:"email"`
+		Name  string `json:"name"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid Body", http.StatusBadRequest)
+	}
+	user := model.User{
+		ID:    req.ID,
+		Name:  req.Name,
+		Email: req.Email,
 	}
 	err := ctrl.service.Update(&user)
 	if err != nil {
@@ -144,8 +155,11 @@ func (ctrl *userController) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ctrl *userController) Delete(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-	err := ctrl.service.Delete(id)
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+	err = ctrl.service.Delete(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}

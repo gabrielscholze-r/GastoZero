@@ -9,8 +9,8 @@ import (
 type CategoryRepository interface {
 	Create(category *model.Category) error
 	Update(category *model.Category) error
-	Delete(id string) error
-	FindById(id string) (*model.Category, error)
+	Delete(id int) error
+	FindById(id int) (*model.Category, error)
 	FindAll() ([]model.Category, error)
 	GetByName(name string) (*model.Category, error)
 }
@@ -31,21 +31,21 @@ func (r *categoryRepository) Create(category *model.Category) error {
 
 func (r *categoryRepository) Update(category *model.Category) error {
 	ctx := context.Background()
-	err := r.db.NewUpdate().Model(category).Where("id = ?", category.ID).Limit(1).Scan(ctx)
+	err := r.db.NewUpdate().Model(category).Where("id = ?", category.ID).Scan(ctx)
 	return err
 }
 
-func (r *categoryRepository) Delete(id string) error {
+func (r *categoryRepository) Delete(id int) error {
 	ctx := context.Background()
-	err := r.db.NewDelete().Model(&model.Category{}).Where("id = ?", id).Limit(1).Scan(ctx)
+	err := r.db.NewDelete().Model(&model.Category{}).Where("id = ?", id).Scan(ctx)
 	return err
 
 }
 
-func (r *categoryRepository) FindById(id string) (*model.Category, error) {
+func (r *categoryRepository) FindById(id int) (*model.Category, error) {
 	ctx := context.Background()
 	category := new(model.Category)
-	err := r.db.NewSelect().Model(category).Where("id = ?", id).Limit(1).Scan(ctx, category)
+	err := r.db.NewSelect().Model(category).Where("id = ?", id).Scan(ctx, category)
 	return category, err
 }
 

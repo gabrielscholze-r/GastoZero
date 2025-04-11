@@ -37,7 +37,7 @@ func (r *expensesRepository) Create(expense *model.Expense) error {
 
 func (r *expensesRepository) Update(expense *model.Expense) error {
 	ctx := context.Background()
-	_, err := r.db.NewUpdate().Model(expense).Where("id = ?", expense.ID).Limit(1).Exec(ctx)
+	_, err := r.db.NewUpdate().Model(expense).Where("id = ?", expense.ID).Exec(ctx)
 	return err
 }
 
@@ -55,7 +55,6 @@ func (r *expensesRepository) Delete(id int) error {
 	_, err = r.db.NewDelete().
 		Model(&model.Expense{}).
 		Where("id = ?", id).
-		Limit(1).
 		Exec(ctx)
 	return err
 }
