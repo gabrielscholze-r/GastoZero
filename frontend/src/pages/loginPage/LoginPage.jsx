@@ -20,35 +20,35 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="h-screen w-full flex items-center justify-center font-display bg-bglight text-primary dark:bg-bgdark dark:text-bglight">
-      <div className="w-full max-w-md bg-primary dark:bg-grayDark p-10 rounded-2xl shadow-lg space-y-6">
-        <h1 className="text-4xl font-bold text-center text-bglight dark:text-bglight">Login</h1>
+    <div className="h-screen w-full flex items-center justify-center font-displa text-textcontainerbg dark:bg-bglight">
+      <div className="w-full max-w-md bg-containerbg dark:bg-grayDark p-10 rounded-2xl shadow-lg space-y-6">
+        <h1 className="text-4xl font-bold text-center text-textcontainerbg">Login</h1>
 
         <div>
-          <label className="block text-bglight mb-1 font-semibold text-sm">Email</label>
+          <label className="block text-textcontainerbg mb-1 font-semibold text-sm">Email</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Digite seu email"
-            className="w-full px-4 py-2 rounded-lg bg-bglight text-primary dark:bg-bglight dark:text-primary font-medium outline-none focus:ring-2 focus:ring-gold"
+            className="w-full px-4 py-2 rounded-lg bg-textcontainerbg text-primary dark:bg-bglight dark:text-primary font-medium outline-none focus:ring-2 focus:ring-gold"
           />
         </div>
 
         <div>
-          <label className="block text-bglight mb-1 font-semibold text-sm">Senha</label>
+          <label className="block text-textcontainerbg mb-1 font-semibold text-sm">Senha</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Digite sua senha"
-            className="w-full px-4 py-2 rounded-lg bg-bglight text-primary dark:bg-bglight dark:text-primary font-medium outline-none focus:ring-2 focus:ring-gold"
+            className="w-full px-4 py-2 rounded-lg bg-textcontainerbg text-primary dark:bg-bglight dark:text-primary font-medium outline-none focus:ring-2 focus:ring-gold"
           />
         </div>
 
         <button
           onClick={handleSubmit}
-          className="w-full py-3 bg-gold hover:bg-yellow transition-all text-bglight font-bold text-lg rounded-lg"
+          className="w-full py-3 bg-gold hover:bg-yellow transition-all text-textcontainerbg font-bold text-lg rounded-lg"
         >
           Entrar
         </button>

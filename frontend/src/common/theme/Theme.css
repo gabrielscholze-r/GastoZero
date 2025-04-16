@@ -8,9 +8,11 @@
     --color-bgdark: oklch(0.93 0.01 270);
     --color-bglight: oklch(0.99 0 0);
 
+    --color-containerbg: oklch(0.44 0.1021 254.51);
+    --color-textcontainerbg: #f8f8f8;
+
     --font-display: "JetBrains Mono", monospace;
 }
-
 [data-theme="dark"] {
     --color-primary: oklch(0.6 0.16 260);
     --color-yellow: oklch(0.8 0.2 90);
@@ -20,4 +22,7 @@
     --color-black: oklch(0.1 0 0);
     --color-bgdark: oklch(0.22 0.01 270);
     --color-bglight: oklch(0.3 0.02 270);
+
+    --color-containerbg: oklch(0.35 0.1 254.51); /* Opção mais escura para o modo escuro */
+    --color-textcontainerbg: #f8f8f8; /* A cor de texto pode ser a mesma */
 }

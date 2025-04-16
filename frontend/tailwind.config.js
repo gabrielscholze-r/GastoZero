@@ -1,4 +1,3 @@
-/** @type {import('tailwindcss').Config} */
 export default {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
@@ -12,6 +11,8 @@ export default {
         black: "var(--color-black)",
         bgdark: "var(--color-bgdark)",
         bglight: "var(--color-bglight)",
+        containerbg: "var(--color-containerbg)", // nova cor
+        textcontainerbg: "var(--color-textcontainerbg)", // nova cor
       },
       fontFamily: {
         display: ["JetBrains Mono", "monospace"],
