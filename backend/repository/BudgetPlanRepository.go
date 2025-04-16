@@ -24,12 +24,14 @@ func NewBudgetPlanRepository(db *bun.DB) BudgetPlanRepository {
 	return &budgetPlanRepository{db: db}
 }
 
+// Create inserts a new BudgetPlan into the database and returns the created plan.
 func (r *budgetPlanRepository) Create(plan *model.BudgetPlan) error {
 	ctx := context.Background()
 	err := r.db.NewInsert().Model(plan).Returning("*").Scan(ctx, plan)
 	return err
 }
 
+// Delete removes a BudgetPlan by ID and deletes all associated BudgetPlanExpense links.
 func (r *budgetPlanRepository) Delete(id int) error {
 	ctx := context.Background()
 
@@ -48,6 +50,7 @@ func (r *budgetPlanRepository) Delete(id int) error {
 	return err
 }
 
+// GetByUser fetches all BudgetPlans that belong to a specific user.
 func (r *budgetPlanRepository) GetByUser(userID int) ([]model.BudgetPlan, error) {
 	ctx := context.Background()
 	var plans []model.BudgetPlan
@@ -61,14 +64,15 @@ func (r *budgetPlanRepository) GetByUser(userID int) ([]model.BudgetPlan, error)
 	return plans, err
 }
 
+// UpdateAmount updates only the total amount of a BudgetPlan.
 func (r *budgetPlanRepository) UpdateAmount(id int, newAmount float64) error {
-
 	plan := &model.BudgetPlan{ID: id, TotalAmount: newAmount}
 	ctx := context.Background()
 	_, err := r.db.NewUpdate().Model(plan).Column("total_amount").Where("id = ?", id).Exec(ctx)
 	return err
 }
 
+// Update replaces the existing BudgetPlan data and its related expenses.
 func (r *budgetPlanRepository) Update(plan *model.BudgetPlan) error {
 	ctx := context.Background()
 
@@ -98,6 +102,7 @@ func (r *budgetPlanRepository) Update(plan *model.BudgetPlan) error {
 	return nil
 }
 
+// GetByID retrieves a BudgetPlan by its ID along with its related expenses.
 func (r *budgetPlanRepository) GetByID(id int) (*model.BudgetPlan, error) {
 	ctx := context.Background()
 	plan := new(model.BudgetPlan)
@@ -110,6 +115,7 @@ func (r *budgetPlanRepository) GetByID(id int) (*model.BudgetPlan, error) {
 	return plan, err
 }
 
+// DeleteExpense removes the relationship between a BudgetPlan and an Expense.
 func (r *budgetPlanRepository) DeleteExpense(budgetID int, expenseID int) error {
 	ctx := context.Background()
 	_, err := r.db.NewDelete().

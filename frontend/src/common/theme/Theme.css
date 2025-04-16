@@ -1,17 +1,23 @@
 :root {
-    --primary-color: #3f8bfa;
-    --secondary-color: #023e8a;
-    --background-color: #ffffff;
-    --text-color: #000000;
-    --titles: #1B4F72;
-    --boxshadow: rgba(0,0,0,0.53);
+    --color-primary: oklch(0.72 0.18 260);
+    --color-yellow: oklch(0.9 0.18 95);
+    --color-gold: oklch(0.78 0.15 85);
+    --color-gray-light: oklch(0.85 0.03 270);
+    --color-gray-dark: oklch(0.65 0.02 270);
+    --color-black: oklch(0.2 0 0);
+    --color-bgdark: oklch(0.93 0.01 270);
+    --color-bglight: oklch(0.99 0 0);
+
+    --font-display: "JetBrains Mono", monospace;
 }
 
 [data-theme="dark"] {
-    --primary-color: #3f8bfa;
-    --secondary-color: #3f8bfa;
-    --background-color: #070d21;
-    --text-color: #F2F6D0;
-    --titles: rgb(93, 173, 226);
-    --boxshadow: rgb(120, 200, 253);
+    --color-primary: oklch(0.6 0.16 260);
+    --color-yellow: oklch(0.8 0.2 90);
+    --color-gold: oklch(0.6 0.16 80);
+    --color-gray-light: oklch(0.65 0.03 270);
+    --color-gray-dark: oklch(0.45 0.02 270);
+    --color-black: oklch(0.1 0 0);
+    --color-bgdark: oklch(0.22 0.01 270);
+    --color-bglight: oklch(0.3 0.02 270);
 }

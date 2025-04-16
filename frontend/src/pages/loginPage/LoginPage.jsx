@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { Cookies } from 'react-cookie';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 import login from './Actions.jsx'
+import Cookies from 'js-cookie'
+
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-
-  const cookies = new Cookies()
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   useEffect(() => {
-    const token = cookies.get("authToken")
+    const token = Cookies.get("authToken")
     if (token) {
       navigate("/home")
     }
@@ -21,11 +20,36 @@ export default function LoginPage() {
   }
 
   return (
-    <div className='h-screen flex items-center justify-center'>
-      <div class=" p-8 rounded shadow-md w-3xl h-100 flex flex-col">
-        <input placeholder="Email" type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <input placeholder="Password" type="text" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <button onClick={handleSubmit}> //create button component
+    <div className="h-screen w-full flex items-center justify-center font-display bg-bglight text-primary dark:bg-bgdark dark:text-bglight">
+      <div className="w-full max-w-md bg-primary dark:bg-grayDark p-10 rounded-2xl shadow-lg space-y-6">
+        <h1 className="text-4xl font-bold text-center text-bglight dark:text-bglight">Login</h1>
+
+        <div>
+          <label className="block text-bglight mb-1 font-semibold text-sm">Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Digite seu email"
+            className="w-full px-4 py-2 rounded-lg bg-bglight text-primary dark:bg-bglight dark:text-primary font-medium outline-none focus:ring-2 focus:ring-gold"
+          />
+        </div>
+
+        <div>
+          <label className="block text-bglight mb-1 font-semibold text-sm">Senha</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Digite sua senha"
+            className="w-full px-4 py-2 rounded-lg bg-bglight text-primary dark:bg-bglight dark:text-primary font-medium outline-none focus:ring-2 focus:ring-gold"
+          />
+        </div>
+
+        <button
+          onClick={handleSubmit}
+          className="w-full py-3 bg-gold hover:bg-yellow transition-all text-bglight font-bold text-lg rounded-lg"
+        >
           Entrar
         </button>
       </div>

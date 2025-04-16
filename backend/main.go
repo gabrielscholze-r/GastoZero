@@ -22,26 +22,35 @@ func main() {
 	sFactory := service.NewBase()
 
 	// inject repositories
-	repoFactory.Init(repository.NewUserRepository(db),
+	repoFactory.Init(
+		repository.NewUserRepository(db),
 		repository.NewBudgetPlanRepository(db),
 		repository.NewCategoryRepository(db),
-		repository.NewExpensesRepository(db))
+		repository.NewExpensesRepository(db),
+	)
 
 	// inject services
 	sFactory.Init(
 		service.NewUserService(repoFactory),
 		service.NewCategoryService(repoFactory),
 		service.NewExpensesService(repoFactory),
-		service.NewBudgetPlanService(repoFactory))
+		service.NewBudgetPlanService(repoFactory),
+	)
 
+	// setup das rotas
 	router := routes.SetupRoutes(sFactory)
 
+	// aplica middleware JWT
 	if err := middleware.InitJWT(); err != nil {
 		log.Fatal(err)
 	}
 
+	// aplica middleware de CORS
+	cors := middleware.CORSMiddleware{BaseURL: "http://localhost:3000"}
+	handlerComCors := cors.Handler(router)
+
 	log.Println("Servidor rodando em :8080")
-	if err := http.ListenAndServe(":8080", router); err != nil {
+	if err := http.ListenAndServe(":8080", handlerComCors); err != nil {
 		log.Fatal("erro ao subir servidor:", err)
 	}
 }

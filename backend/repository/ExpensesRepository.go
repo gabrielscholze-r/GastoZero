@@ -22,6 +22,7 @@ func NewExpensesRepository(db *bun.DB) ExpensesRepository {
 	return &expensesRepository{db: db}
 }
 
+// Create inserts a new Expense into the database and links it to a BudgetPlan.
 func (r *expensesRepository) Create(expense *model.Expense) error {
 	ctx := context.Background()
 	if err := r.db.NewInsert().Model(expense).Returning("*").Scan(ctx, expense); err != nil {
@@ -35,12 +36,14 @@ func (r *expensesRepository) Create(expense *model.Expense) error {
 	return err
 }
 
+// Update modifies an existing Expense based on its ID.
 func (r *expensesRepository) Update(expense *model.Expense) error {
 	ctx := context.Background()
 	_, err := r.db.NewUpdate().Model(expense).Where("id = ?", expense.ID).Exec(ctx)
 	return err
 }
 
+// Delete removes an Expense and its association from the BudgetPlanExpense table.
 func (r *expensesRepository) Delete(id int) error {
 	ctx := context.Background()
 
@@ -58,6 +61,8 @@ func (r *expensesRepository) Delete(id int) error {
 		Exec(ctx)
 	return err
 }
+
+// GetByPlan retrieves all Expenses associated with a specific BudgetPlan ID.
 func (r *expensesRepository) GetByPlan(id int) ([]model.Expense, error) {
 	ctx := context.Background()
 	var expenses []model.Expense
@@ -67,6 +72,8 @@ func (r *expensesRepository) GetByPlan(id int) ([]model.Expense, error) {
 	}
 	return expenses, err
 }
+
+// GetByCategory retrieves all Expenses that belong to a specific Category ID.
 func (r *expensesRepository) GetByCategory(id int) ([]model.Expense, error) {
 	ctx := context.Background()
 	var expenses []model.Expense

@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+@theme {
+  --color-primary: #5067AA;
+  --color-blue-light: #86A6DE;
+  --color-blue-dark: #324F7B;
+  --color-bglight: #F8F8F8;
+  --font-display: "JetBrains Mono", "monospace";
+}

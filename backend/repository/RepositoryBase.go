@@ -15,6 +15,7 @@ func NewBase() *RepositoryBase {
 	}
 }
 
+// Init registers one or more repository implementations into the base.
 func (f *RepositoryBase) Init(repo ...interface{}) {
 	f.registry = make(map[reflect.Type]interface{})
 	for _, repo := range repo {
@@ -23,6 +24,8 @@ func (f *RepositoryBase) Init(repo ...interface{}) {
 	}
 }
 
+// GetByType retrieves a registered repository by its interface type.
+// It panics if no matching repository is found.
 func GetByType[T any](f *RepositoryBase) T {
 	targetType := reflect.TypeOf((*T)(nil)).Elem()
 
