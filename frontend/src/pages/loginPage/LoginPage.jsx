@@ -20,7 +20,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="h-screen w-full flex items-center justify-center font-displa text-textcontainerbg dark:bg-bglight">
+    <div className="h-screen w-full flex items-center justify-center font-display text-textcontainerbg dark:bg-bglight">
       <div className="w-full max-w-md bg-containerbg dark:bg-grayDark p-10 rounded-2xl shadow-lg space-y-6">
         <h1 className="text-4xl font-bold text-center text-textcontainerbg">Login</h1>
 

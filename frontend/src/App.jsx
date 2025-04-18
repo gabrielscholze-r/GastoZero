@@ -4,6 +4,10 @@ import LoginPage from './pages/loginPage/LoginPage'
 import { ThemeProvider } from './context/ThemeContext';
 import Sidebar from './components/sidebar/Sidebar'
 import './common/theme/Theme.css'
+import NotFound from './pages/notFound/NotFound';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
+
 
 function App() {
   return (
@@ -12,10 +16,11 @@ function App() {
         <div className="flex font-display">
           <Sidebar />
           <Routes>
-            <Route Component={LoginPage} path='*' />
+            <Route Component={NotFound} path='*' />
             <Route Component={LoginPage} path='/login' />
           </Routes>
         </div>
+        <ToastContainer />
       </BrowserRouter>
     </ThemeProvider>
   )
