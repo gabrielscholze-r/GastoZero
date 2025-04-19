@@ -10,6 +10,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     const token = Cookies.get("authToken")
+    console.log(token)
     if (token) {
       navigate("/home")
     }
@@ -48,7 +49,7 @@ export default function LoginPage() {
 
         <button
           onClick={handleSubmit}
-          className="w-full py-3 bg-gold hover:bg-yellow transition-all text-textcontainerbg font-bold text-lg rounded-lg"
+          className="w-full py-3 bg-bgdark transition-all text-textcontainerbg font-bold text-lg rounded-lg cursor-pointer hover:opacity-80"
         >
           Entrar
         </button>

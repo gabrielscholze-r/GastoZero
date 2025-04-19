@@ -6,8 +6,8 @@
   --color-blue-dark: #324F7B;
   --color-bglight: #F8F8F8;
   
-  --color-containerbg: oklch(0.44 0.1021 254.51); /* Nova variável */
-  --color-textcontainerbg: #f8f8f8; /* Nova variável */
+  --color-containerbg: oklch(0.44 0.1021 254.51);
+  --color-textcontainerbg: #f8f8f8;
   
   --font-display: "JetBrains Mono", "monospace";
 }
