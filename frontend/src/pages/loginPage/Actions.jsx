@@ -1,17 +1,24 @@
-import axios from "axios"
-import Cookies from 'js-cookie'
+import axios from "axios";
 
-const defaultPath = "http://localhost:8080/" 
+const defaultPath = "http://localhost:8080/";
 
-const login = (email, password) => {
-    axios.post(defaultPath + "users/login", {
-        email,
-        password
-    })
-    .then(dispatch => {
-        dispatch.data["token"] ? Cookies.set("authToken", dispatch.data["token"]) : null
-    })
-}
+const login = async (email, password) => {
+    try {
+        const response = await axios.post(defaultPath + "users/login", {
+            email,
+            password,
+        });
 
+        const token = response.data?.token;
 
-export default login
+        if (token) {
+            return token;
+        } else {
+            throw new Error("Token não encontrado na resposta.");
+        }
+    } catch (error) {
+        throw new Error(error.response?.data?.message || "Erro ao fazer login.");
+    }
+};
+
+export default login;

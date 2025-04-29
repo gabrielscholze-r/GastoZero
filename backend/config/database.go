@@ -1,43 +1,49 @@
 package config
 
 import (
-	"database/sql"
+	"context"
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
-	"github.com/uptrace/bun"
-	"github.com/uptrace/bun/dialect/pgdialect"
-	"github.com/uptrace/bun/driver/pgdriver"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var DB *bun.DB
+var MongoClient *mongo.Client
 
-func ConnectDB() (*bun.DB, error) {
-	// Load .env
+func ConnectMongoDB() (*mongo.Client, error) {
 	err := godotenv.Load()
 	if err != nil {
-		return nil, fmt.Errorf("failed to load .env: %v", err)
+		log.Println(".env não encontrado, seguindo com variáveis do sistema")
 	}
 
-	dsn := fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_NAME"),
-	)
-	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
+	user := os.Getenv("MONGO_USER")
+	pass := os.Getenv("MONGO_PASSWORD")
 
-	db := bun.NewDB(sqldb, pgdialect.New())
-
-	if err := db.Ping(); err != nil {
-		return nil, fmt.Errorf("failed to ping database: %v", err)
+	if user == "" || pass == "" {
+		return nil, fmt.Errorf("MONGO_USER ou MONGO_PASSWORD não definidos")
 	}
 
-	log.Println("Successfully connected to PostgreSQL with Bun!")
-	DB = db
-	return db, nil
+	uri := fmt.Sprintf("mongodb://%s:%s@localhost:27017", user, pass)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	clientOptions := options.Client().ApplyURI(uri)
+
+	client, err := mongo.Connect(ctx, clientOptions)
+	if err != nil {
+		return nil, fmt.Errorf("erro ao conectar no MongoDB: %v", err)
+	}
+
+	if err := client.Ping(ctx, nil); err != nil {
+		return nil, fmt.Errorf("falha ao dar ping no MongoDB: %v", err)
+	}
+
+	log.Println("Conectado com sucesso ao MongoDB!")
+	MongoClient = client
+	return client, nil
 }
