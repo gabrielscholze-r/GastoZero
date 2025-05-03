@@ -15,6 +15,7 @@ func main() {
 	fmt.Println("ConnectDB")
 	db, err := config.ConnectDB()
 	if err != nil {
+		fmt.Println(err)
 		return
 	}
 
