@@ -11,8 +11,9 @@ export default {
         black: "var(--color-black)",
         bgdark: "var(--color-bgdark)",
         bglight: "var(--color-bglight)",
-        containerbg: "var(--color-containerbg)", // nova cor
-        textcontainerbg: "var(--color-textcontainerbg)", // nova cor
+        containerbg: "var(--color-containerbg)",
+        textcontainerbg: "var(--color-textcontainerbg)",
+        text: "var(--color-text)",
       },
       fontFamily: {
         display: ["JetBrains Mono", "monospace"],

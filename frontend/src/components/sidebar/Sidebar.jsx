@@ -46,6 +46,13 @@ export default function Sidebar({isOpen, setIsOpen}) {
                 Home
             </NavLink>
             <NavLink
+                to="/plans"
+                className="block text-xl font-bold hover:underline transition"
+                onClick={() => setIsOpen(false)}
+            >
+                Plans
+            </NavLink>
+            <NavLink
                 to="/reports"
                 className="block text-xl font-bold hover:underline transition"
                 onClick={() => setIsOpen(false)}

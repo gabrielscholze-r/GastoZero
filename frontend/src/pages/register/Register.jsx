@@ -1,14 +1,30 @@
 import React, { useState } from 'react'
+import create from './Actions.jsx'
+import Cookies from "js-cookie";
+import {toast} from "react-toastify";
+import {useNavigate} from "react-router-dom";
 
 export default function Register() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("")
   const [name, setName] = useState("")
   const [password, setPassword] = useState("")
   const [cPassword, setCPassword] = useState("")
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
+    if (password !== cPassword) {
+      toast.error("Passwords dont match");
+      return;
+    }
+    try {
+      await create(name, email, password);
+      toast.success("Account created successfully.");
+      navigate('/login');
+    } catch (e) {
+      toast.error(`Error creating account: ${e.message}`);
+    }
+  };
 
-  }
 
   return (
     <div className="h-screen w-full flex items-center justify-center font-displa text-textcontainerbg dark:bg-bglight">
@@ -37,31 +53,32 @@ export default function Register() {
         </div>
 
         <div>
-          <label className="block text-textcontainerbg mb-1 font-semibold text-sm">Senha</label>
+          <label className="block text-textcontainerbg mb-1 font-semibold text-sm">Password</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Digite sua senha"
+            placeholder="Password"
             className="w-full px-4 py-2 rounded-lg bg-textcontainerbg text-primary dark:bg-bglight dark:text-primary font-medium outline-none focus:ring-2 focus:ring-gold"
           />
         </div>
         <div>
-          <label className="block text-textcontainerbg mb-1 font-semibold text-sm">Confirmar senha</label>
+          <label className="block text-textcontainerbg mb-1 font-semibold text-sm">Confirm password</label>
           <input
             type="password"
             value={cPassword}
             onChange={(e) => setCPassword(e.target.value)}
-            placeholder="Confirme sua Senha"
+            placeholder="Confirm password"
             className="w-full px-4 py-2 rounded-lg bg-textcontainerbg text-primary dark:bg-bglight dark:text-primary font-medium outline-none focus:ring-2 focus:ring-gold"
           />
         </div>
+        <p className={`text-red-500 ${password != cPassword ? "opacity-100" : "opacity-0"}`}>Passwords must match</p>
 
         <button
           onClick={handleCreate}
           className="w-full py-3 bg-blue-dark transition-all text-textcontainerbg font-bold text-lg rounded-lg cursor-pointer hover:opacity-80"
         >
-          Entrar
+          Sign in
         </button>
       </div>
     </div>
