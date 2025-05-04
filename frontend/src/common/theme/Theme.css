@@ -8,8 +8,9 @@
     --color-bgdark: oklch(0.93 0.01 270);
     --color-bglight: oklch(0.99 0 0);
 
-    --color-containerbg: oklch(0.44 0.1021 254.51);
+    --color-containerbg: oklch(0.35 0.1 254.51);
     --color-textcontainerbg: #f8f8f8;
+    --color-text: #061a32;
 
     --font-display: "JetBrains Mono", monospace;
 }
@@ -20,9 +21,9 @@
     --color-gray-light: oklch(0.65 0.03 270);
     --color-gray-dark: oklch(0.45 0.02 270);
     --color-black: oklch(0.1 0 0);
-    --color-bgdark: oklch(0.22 0.01 270);
+    --color-bgdark: #061a32;
     --color-bglight: oklch(0.3 0.02 270);
-
-    --color-containerbg: oklch(0.35 0.1 254.51); /* Opção mais escura para o modo escuro */
+    --color-text: #ffffff;
+    --color-containerbg: oklch(0.44 0.1021 254.51); /* Opção mais escura para o modo escuro */
     --color-textcontainerbg: #f8f8f8; /* A cor de texto pode ser a mesma */
 }

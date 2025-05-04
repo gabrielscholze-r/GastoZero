@@ -1,6 +1,7 @@
 package config
 
 import (
+	"backend/model"
 	"database/sql"
 	"fmt"
 	"log"
@@ -32,7 +33,7 @@ func ConnectDB() (*bun.DB, error) {
 	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
 
 	db := bun.NewDB(sqldb, pgdialect.New())
-
+	db.RegisterModel((*model.BudgetPlanExpense)(nil))
 	if err := db.Ping(); err != nil {
 		return nil, fmt.Errorf("failed to ping database: %v", err)
 	}

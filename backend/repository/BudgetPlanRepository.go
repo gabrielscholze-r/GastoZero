@@ -92,7 +92,7 @@ func (r *budgetPlanRepository) Update(plan *model.BudgetPlan) error {
 	for _, expense := range plan.Expenses {
 		link := &model.BudgetPlanExpense{
 			BudgetPlanID: plan.ID,
-			ExpenseID:    expense,
+			ExpenseID:    expense.ID,
 		}
 		if _, err := r.db.NewInsert().Model(link).Exec(ctx); err != nil {
 			return err

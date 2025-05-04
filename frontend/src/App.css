@@ -5,9 +5,12 @@
   --color-blue-light: #86A6DE;
   --color-blue-dark: #324F7B;
   --color-bglight: #F8F8F8;
-  
-  --color-containerbg: oklch(0.44 0.1021 254.51);
+  --bgdark: #F8F8F8;
+
+  --color-containerbg: oklch(0.35 0.1 254.51);
   --color-textcontainerbg: #f8f8f8;
+  --color-text: #061a32;
+  --color-bgdark: oklch(0.93 0.01 270);
   
   --font-display: "JetBrains Mono", "monospace";
 }
