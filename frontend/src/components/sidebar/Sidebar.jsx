@@ -1,14 +1,22 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {NavLink, useNavigate} from 'react-router-dom';
 import {useTheme} from '../../context/ThemeContext.jsx';
 import Cookies from 'js-cookie';
 import {Slide, toast} from "react-toastify";
 import {FaSpinner} from "react-icons/fa";
+import Cookie from "js-cookie";
 
 export default function Sidebar({isOpen, setIsOpen}) {
     const {theme, toggleTheme} = useTheme();
     const navigate = useNavigate();
     const authToken = Cookies.get('authToken');
+
+    useEffect(() => {
+        var current = Cookie.get("theme");
+        if (current) {
+            toggleTheme(current);
+        }
+    }, [toggleTheme]);
 
     const handleLogout = () => {
         Cookies.remove('authToken');
@@ -39,7 +47,7 @@ export default function Sidebar({isOpen, setIsOpen}) {
     const authenticatedLinks = (
         <>
             <NavLink
-                to="/"
+                to="/home"
                 className="block text-xl font-bold hover:underline transition"
                 onClick={() => setIsOpen(false)}
             >
@@ -92,7 +100,7 @@ export default function Sidebar({isOpen, setIsOpen}) {
         <>
             <div
                 className="md:hidden flex items-center justify-between bg-containerbg text-textcontainerbg p-4 z-50 fixed top-0 left-0 w-full">
-                <h1 className="text-xl font-bold">GastoZero</h1>
+                <h1 className="text-xl font-bold mb-5">GastoZero</h1>
                 <button
                     onClick={() => setIsOpen(true)}
                     className="flex flex-col justify-between w-6 h-5"

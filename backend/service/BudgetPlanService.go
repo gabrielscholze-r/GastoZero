@@ -7,7 +7,7 @@ import (
 )
 
 type BudgetPlanService interface {
-	Create(b *model.BudgetPlan) error
+	Create(b *model.BudgetPlan, email string) error
 	FindByUser(id int) ([]model.BudgetPlan, error)
 	Delete(id int) error
 	Update(b *model.BudgetPlan) error
@@ -25,11 +25,12 @@ func NewBudgetPlanService(factory *repository.RepositoryBase) BudgetPlanService 
 	}
 }
 
-func (s *budgetPlanService) Create(b *model.BudgetPlan) error {
-	user, _ := s.user.FindByID(b.UserID)
+func (s *budgetPlanService) Create(b *model.BudgetPlan, email string) error {
+	user, _ := s.user.FindByEmail(email)
 	if user == nil {
 		return errors.New("user does not exists")
 	}
+	b.UserID = user.ID
 	return s.repository.Create(b)
 }
 

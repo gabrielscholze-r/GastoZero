@@ -49,7 +49,12 @@ func (ctrl *budgetPlanController) CreatePlan(w http.ResponseWriter, r *http.Requ
 		Expenses:    expenses,
 		CreatedDate: time.Now(),
 	}
-	err := ctrl.service.Create(&budgetPlat)
+	email, ok := r.Context().Value("email").(string)
+	if !ok {
+		http.Error(w, "Email not found", http.StatusUnauthorized)
+		return
+	}
+	err := ctrl.service.Create(&budgetPlat, email)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
