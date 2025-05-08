@@ -17,6 +17,7 @@ import ProtectedRoute from './components/protectedRoutes/ProtectedRoutes.jsx';
 import PlansPage from "./pages/plans/PlansPage.jsx";
 
 import {setUnauthorizedHandler} from './services/API.jsx';
+import Plan from "./pages/plan/Plan.jsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -31,7 +32,9 @@ const queryClient = new QueryClient({
 function AppContent() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [plan, setPlan] = useState({});
     const navigate = useNavigate();
+
 
     useEffect(() => {
         const token = Cookies.get('authToken');
@@ -49,7 +52,7 @@ function AppContent() {
                 menuOpen ? 'overflow-hidden h-screen' : 'overflow-y-hidden'
             }`}
         >
-            <Sidebar isOpen={menuOpen} setIsOpen={setMenuOpen}/>
+            <Sidebar isOpen={menuOpen} setIsOpen={setMenuOpen} setPlan={setPlan}/>
             <div className="flex-1">
                 <Routes>
                     <Route
@@ -63,7 +66,7 @@ function AppContent() {
                     <Route path="/login" element={<LoginPage/>}/>
                     <Route path="/register" element={<Register/>}/>
                     <Route path="*" element={<NotFound/>}/>
-                    <Route path="/plans" element={<PlansPage/>}/>
+                    <Route path="/plan" element={<Plan data={plan}/>}/>
                 </Routes>
             </div>
         </div>

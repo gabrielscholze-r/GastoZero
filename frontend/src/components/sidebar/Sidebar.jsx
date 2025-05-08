@@ -5,8 +5,9 @@ import Cookies from 'js-cookie';
 import {Slide, toast} from "react-toastify";
 import {FaSpinner} from "react-icons/fa";
 import Cookie from "js-cookie";
+import ProtectedSidebar from "./ProtectedSidebar.jsx";
 
-export default function Sidebar({isOpen, setIsOpen}) {
+export default function Sidebar({isOpen, setIsOpen, setPlan}) {
     const {theme, toggleTheme} = useTheme();
     const navigate = useNavigate();
     const authToken = Cookies.get('authToken');
@@ -45,36 +46,7 @@ export default function Sidebar({isOpen, setIsOpen}) {
     }
 
     const authenticatedLinks = (
-        <>
-            <NavLink
-                to="/home"
-                className="block text-xl font-bold hover:underline transition"
-                onClick={() => setIsOpen(false)}
-            >
-                Home
-            </NavLink>
-            <NavLink
-                to="/plans"
-                className="block text-xl font-bold hover:underline transition"
-                onClick={() => setIsOpen(false)}
-            >
-                Plans
-            </NavLink>
-            <NavLink
-                to="/reports"
-                className="block text-xl font-bold hover:underline transition"
-                onClick={() => setIsOpen(false)}
-            >
-                Reports
-            </NavLink>
-            <NavLink
-                to="/expenses"
-                className="block text-xl font-bold hover:underline transition"
-                onClick={() => setIsOpen(false)}
-            >
-                Expenses
-            </NavLink>
-        </>
+        <ProtectedSidebar setIsOpen={setIsOpen} setPlan={setPlan}/>
     );
 
     const guestLinks = (
