@@ -1,19 +1,18 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import {NavLink, useNavigate} from 'react-router-dom';
 import {useTheme} from '../../context/ThemeContext.jsx';
 import Cookies from 'js-cookie';
 import {Slide, toast} from "react-toastify";
 import {FaSpinner} from "react-icons/fa";
-import Cookie from "js-cookie";
 import ProtectedSidebar from "./ProtectedSidebar.jsx";
 
-export default function Sidebar({isOpen, setIsOpen, setPlan}) {
+export default function Sidebar({isOpen, setIsOpen, setPlan, selectedPlan}) {
     const {theme, toggleTheme} = useTheme();
     const navigate = useNavigate();
     const authToken = Cookies.get('authToken');
 
     useEffect(() => {
-        var current = Cookie.get("theme");
+        const current = Cookies.get('theme');
         if (current) {
             toggleTheme(current);
         }
@@ -23,7 +22,7 @@ export default function Sidebar({isOpen, setIsOpen, setPlan}) {
         Cookies.remove('authToken');
         toast.info(
             <div className="flex items-center gap-2">
-                <FaSpinner  className="animate-spin" />
+                <FaSpinner className="animate-spin" />
                 <span>Logged out successfully!</span>
             </div>,
             {
@@ -36,17 +35,16 @@ export default function Sidebar({isOpen, setIsOpen, setPlan}) {
                 theme: "light",
                 transition: Slide,
             }
-        )
-
-        const timer = setTimeout(() => {
-            navigate('/login')
-        }, 2000)
-
-        return () => clearTimeout(timer)
-    }
+        );
+        setTimeout(() => navigate('/login'), 2000);
+    };
 
     const authenticatedLinks = (
-        <ProtectedSidebar setIsOpen={setIsOpen} setPlan={setPlan}/>
+        <ProtectedSidebar
+            setIsOpen={setIsOpen}
+            setPlan={setPlan}
+            selectedPlan={selectedPlan}
+        />
     );
 
     const guestLinks = (
@@ -70,8 +68,7 @@ export default function Sidebar({isOpen, setIsOpen, setPlan}) {
 
     return (
         <>
-            <div
-                className="md:hidden flex items-center justify-between bg-containerbg text-textcontainerbg p-4 z-50 fixed top-0 left-0 w-full">
+            <div className="md:hidden flex items-center justify-between bg-containerbg text-textcontainerbg p-4 z-50 fixed top-0 left-0 w-full">
                 <h1 className="text-xl font-bold mb-5">GastoZero</h1>
                 <button
                     onClick={() => setIsOpen(true)}
@@ -84,8 +81,7 @@ export default function Sidebar({isOpen, setIsOpen, setPlan}) {
             </div>
 
             {isOpen && (
-                <div
-                    className="fixed inset-0 bg-containerbg text-textcontainerbg z-50 flex flex-col justify-between p-6 overflow-y-auto">
+                <div className="fixed inset-0 bg-containerbg text-textcontainerbg z-50 flex flex-col justify-between p-6 overflow-y-auto">
                     <div>
                         <div className="flex justify-between items-center mb-8 sticky top-0 bg-containerbg py-2">
                             <h1 className="text-xl font-bold">GastoZero</h1>
@@ -114,15 +110,13 @@ export default function Sidebar({isOpen, setIsOpen, setPlan}) {
                 </div>
             )}
 
-            <div
-                className="hidden md:flex flex-col justify-between w-1/5 min-h-screen bg-containerbg text-textcontainerbg py-8 px-6">
+            <div className="hidden md:flex flex-col justify-between w-1/5 min-h-screen bg-containerbg text-textcontainerbg py-8 px-6">
                 <div className="space-y-6">
                     <h1 className="text-2xl">GastoZero</h1>
                     {authToken ? authenticatedLinks : guestLinks}
                 </div>
                 <div className="flex justify-between items-center">
                     <div>
-
                         <label className="block mb-2 text-base font-semibold">Theme:</label>
                         <select
                             value={theme}
@@ -134,9 +128,7 @@ export default function Sidebar({isOpen, setIsOpen, setPlan}) {
                         </select>
                     </div>
                     <div className="hover:cursor-pointer" onClick={handleLogout}>
-                        <h3>
-                            Log Out
-                        </h3>
+                        <h3>Log Out</h3>
                     </div>
                 </div>
             </div>

@@ -1,4 +1,4 @@
-import {BrowserRouter, Route, Routes, useNavigate} from 'react-router-dom';
+import {BrowserRouter, Route, Routes, useLocation, useNavigate} from 'react-router-dom';
 import {ThemeProvider} from './context/ThemeContext';
 import Sidebar from './components/sidebar/Sidebar';
 import './App.css';
@@ -14,10 +14,8 @@ import Register from './pages/register/Register';
 import NotFound from './pages/notFound/NotFound';
 import HomePage from './pages/homePage/Home.jsx';
 import ProtectedRoute from './components/protectedRoutes/ProtectedRoutes.jsx';
-import PlansPage from "./pages/plans/PlansPage.jsx";
-
+import Plan from './pages/plan/Plan.jsx';
 import {setUnauthorizedHandler} from './services/API.jsx';
-import Plan from "./pages/plan/Plan.jsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -36,10 +34,18 @@ function AppContent() {
     const navigate = useNavigate();
 
 
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.pathname !== '/plan') {
+            setPlan({});
+        }
+    }, [location.pathname]);
+
+
     useEffect(() => {
         const token = Cookies.get('authToken');
         setIsAuthenticated(!!token);
-
         setUnauthorizedHandler(() => {
             setIsAuthenticated(false);
             navigate('/login');
@@ -47,12 +53,13 @@ function AppContent() {
     }, [navigate]);
 
     return (
-        <div
-            className={`flex flex-col md:flex-row w-full font-display vh-100 bg-bgdark ${
-                menuOpen ? 'overflow-hidden h-screen' : 'overflow-y-hidden'
-            }`}
-        >
-            <Sidebar isOpen={menuOpen} setIsOpen={setMenuOpen} setPlan={setPlan}/>
+        <div className="flex flex-col md:flex-row w-full font-display min-h-screen bg-bgdark overflow-hidden">
+            <Sidebar
+                isOpen={menuOpen}
+                setIsOpen={setMenuOpen}
+                setPlan={setPlan}
+                selectedPlan={plan}
+            />
             <div className="flex-1">
                 <Routes>
                     <Route
@@ -75,14 +82,16 @@ function AppContent() {
 
 function App() {
     return (
-        <QueryClientProvider client={queryClient}>
-            <ThemeProvider>
-                <BrowserRouter>
-                    <AppContent/>
-                    <ToastContainer/>
-                </BrowserRouter>
-            </ThemeProvider>
-        </QueryClientProvider>
+        <div>
+            <QueryClientProvider client={queryClient}>
+                <ThemeProvider>
+                    <BrowserRouter>
+                        <AppContent/>
+                        <ToastContainer/>
+                    </BrowserRouter>
+                </ThemeProvider>
+            </QueryClientProvider>
+        </div>
     );
 }
 
