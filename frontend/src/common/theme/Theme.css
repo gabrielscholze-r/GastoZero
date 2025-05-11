@@ -1,29 +1,42 @@
 :root {
-    --color-primary: oklch(0.72 0.18 260);
-    --color-yellow: oklch(0.9 0.18 95);
-    --color-gold: oklch(0.78 0.15 85);
-    --color-gray-light: oklch(0.85 0.03 270);
-    --color-gray-dark: oklch(0.65 0.02 270);
-    --color-black: oklch(0.2 0 0);
-    --color-bgdark: oklch(0.93 0.01 270);
-    --color-bglight: oklch(0.99 0 0);
+  --color-primary: oklch(0.72 0.18 260);
+  --color-yellow: #d6ccf5;
+  --color-gold: #a3a1c5;
+  --color-gray-light: #eae9f0;
+  --color-gray-dark: #78788a;
+  --color-black: #3a3a4a;
+  --color-bgdark: oklch(0.93 0.01 270);
+  --color-bglight: oklch(0.99 0 0);
 
-    --color-containerbg: oklch(0.35 0.1 254.51);
-    --color-textcontainerbg: #f8f8f8;
-    --color-text: #061a32;
+  --color-containerbg: oklch(0.35 0.1 254.51);
+  --color-textcontainerbg: #f8f8f8;
+  --color-text: #061a32;
 
-    --font-display: "Roboto Mono", monospace;
+  --color-blue-100: #e8edfa;
+  --color-blue-300: #b4c2e9;
+  --color-blue-500: #7283c6;
+  --color-blue-700: #47539c;
+  --color-blue-900: #2b3564;
+
+  --font-display: "Roboto Mono", monospace;
 }
+
 [data-theme="dark"] {
-    --color-primary: oklch(0.6 0.16 260);
-    --color-yellow: oklch(0.8 0.2 90);
-    --color-gold: oklch(0.6 0.16 80);
-    --color-gray-light: oklch(0.65 0.03 270);
-    --color-gray-dark: oklch(0.45 0.02 270);
-    --color-black: oklch(0.1 0 0);
-    --color-bgdark: #061a32;
-    --color-bglight: oklch(0.3 0.02 270);
-    --color-text: #ffffff;
-    --color-containerbg: oklch(0.44 0.1021 254.51);
-    --color-textcontainerbg: #f8f8f8;
+  --color-primary: oklch(0.6 0.16 260);
+  --color-yellow: #b6aef0;
+  --color-gold: #8987b5;
+  --color-gray-light: #b6b5c5;
+  --color-gray-dark: #505064;
+  --color-black: #1c1c28;
+  --color-bgdark: #061a32;
+  --color-bglight: oklch(0.3 0.02 270);
+  --color-text: #ffffff;
+  --color-containerbg: oklch(0.44 0.1021 254.51);
+  --color-textcontainerbg: #f8f8f8;
+
+  --color-blue-100: #2d3353;
+  --color-blue-300: #3a4573;
+  --color-blue-500: #4a5c9a;
+  --color-blue-700: #6d7bc0;
+  --color-blue-900: #c3c8f1;
 }

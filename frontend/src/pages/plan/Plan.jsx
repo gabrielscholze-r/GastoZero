@@ -1,14 +1,20 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaInfoCircle } from "react-icons/fa";
+import PlanAddEntry from "./PlanAddEntry";
+import { getCategories, getExpensesByPlan } from "./Actions";
 
 export default function Plan({ data }) {
   const navigate = useNavigate();
   const [localData, setLocalData] = useState(null);
+  const [categories, setCategories] = useState([]);
   const [showTooltip, setShowTooltip] = useState(false);
   const [expenses, setExpenses] = useState([]);
   const [activeColumn, setActiveColumn] = useState(null);
+  const [isAdding, setIsAdding] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!data || Object.keys(data).length === 0) {
@@ -17,88 +23,146 @@ export default function Plan({ data }) {
       setLocalData(null);
       setTimeout(() => {
         setLocalData(data);
-        setExpenses(data.expenses || []);
+        loadExpenses(data.id);
+        loadCategories()
       }, 100);
+      console.log(categories)
     }
   }, [data, navigate]);
 
-  if (!data || Object.keys(data).length === 0) return null;
+  const loadExpenses = async (planId) => {
+    const result = await getExpensesByPlan(planId);
+    if (result.success) {
+      setExpenses(result.data ?? []);
+    } else {
+      setError(result.error);
+    }
+  };
 
-  const handleAddEntry = () => {
-    console.log("Add entry clicked");
+  const loadCategories = async () => {
+    const result = await getCategories();
+    setCategories(result ?? []);
+  };
+
+  const handleAddExpense = (newExpense) => {
+    setExpenses((prev) => [
+      ...prev,
+      {
+        ...newExpense,
+        id: newExpense.id,
+        amount: newExpense.amount,
+        description: newExpense.description,
+        category_id: newExpense.category_id,
+        date: newExpense.date,
+        is_recurring: newExpense.is_recurring,
+        budget_id: newExpense.budget_id,
+      },
+    ]);
+    setIsAdding(false);
   };
 
   const handleHeaderClick = (column) => {
     setActiveColumn(column);
   };
 
+  if (!data || Object.keys(data).length === 0) return null;
+
   const ExpenseList = () => {
     return (
-      <div>
-        <div className="flex justify-end mb-4">
-          <button
-            onClick={handleAddEntry}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow cursor-pointer transition-colors"
-          >
-            + Add Entry
-          </button>
+      <div className="flex flex-col gap-4">
+        <div className="flex gap-4 items-center">
+          {!isAdding && (
+            <button
+              onClick={() => setIsAdding(true)}
+              className="bg-blue-700 transition-opacity hover:opacity-70 text-white px-4 py-2 rounded shadow cursor-pointer"
+              disabled={isLoading}
+            >
+              {isLoading ? "Loading..." : "+ Add Entry"}
+            </button>
+          )}
+          {isAdding && (
+            <div className="flex gap-4">
+              <button
+                onClick={() => {
+                  document.getElementById("plan-entry-form")?.requestSubmit();
+                }}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow"
+              >
+                Save
+              </button>
+              <button
+                onClick={() => setIsAdding(false)}
+                className="text-white px-4 py-2 rounded hover:underline"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+          {error && <span className="text-red-500 text-sm">{error}</span>}
         </div>
 
-        <div className="overflow-x-auto max-h-[300px] overflow-y-auto rounded">
+       <div className="overflow-x-auto max-h-[300px] overflow-y-auto rounded">
           <table className="w-full table-auto border-collapse text-sm">
             <thead>
-              <tr className="bg-zinc-800 text-white cursor-pointer">
+              <tr className="bg-blue-700 text-white cursor-pointer">
                 <th
-                  className={`p-2 text-left ${
-                    activeColumn === "date" ? "bg-blue-700" : ""
+                  className={`p-2 w-[15%] text-left ${
+                    activeColumn === "date" ? "bg-blue-900" : ""
                   }`}
                   onClick={() => handleHeaderClick("date")}
                 >
                   Date
                 </th>
                 <th
-                  className={`p-2 text-left ${
-                    activeColumn === "description" ? "bg-blue-700" : ""
+                  className={`p-2 w-[30%] text-left ${
+                    activeColumn === "description" ? "bg-blue-900" : ""
                   }`}
                   onClick={() => handleHeaderClick("description")}
                 >
                   Description
                 </th>
                 <th
-                  className={`p-2 text-left ${
-                    activeColumn === "category_id" ? "bg-blue-700" : ""
+                  className={`p-2 w-[20%] text-left ${
+                    activeColumn === "category_id" ? "bg-blue-900" : ""
                   }`}
                   onClick={() => handleHeaderClick("category_id")}
                 >
                   Category
                 </th>
                 <th
-                  className={`p-2 text-left ${
-                    activeColumn === "amount" ? "bg-blue-700" : ""
+                  className={`p-2 w-[15%] text-left ${
+                    activeColumn === "amount" ? "bg-blue-900" : ""
                   }`}
                   onClick={() => handleHeaderClick("amount")}
                 >
                   Amount
                 </th>
                 <th
-                  className={`p-2 text-left ${
-                    activeColumn === "is_recurring" ? "bg-blue-700" : ""
+                  className={`p-2 w-[20%] text-left ${
+                    activeColumn === "is_recurring" ? "bg-blue-900" : ""
                   }`}
                   onClick={() => handleHeaderClick("is_recurring")}
                 >
-                  Recurring?
+                  Recurring
                 </th>
               </tr>
             </thead>
             <tbody>
+              {isAdding && (
+                <PlanAddEntry
+                  onSave={handleAddExpense}
+                  onCancel={() => setIsAdding(false)}
+                  categories={categories}
+                  setIsAdding={setIsAdding}
+                  budgetId={localData.id}
+                />
+              )}
               {expenses.map((expense) => (
                 <tr
                   key={expense.id}
                   className="odd:bg-zinc-900 even:bg-zinc-800 text-white"
                 >
-                  <td className="p-2">
-                    {new Date(expense.date).toLocaleDateString()}
-                  </td>
+                  <td className="p-2">{expense.date}</td>
                   <td className="p-2">{expense.description}</td>
                   <td className="p-2">{expense.category_id}</td>
                   <td className="p-2">R$ {expense.amount.toFixed(2)}</td>

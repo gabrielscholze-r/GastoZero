@@ -38,15 +38,15 @@ func main() {
 		service.NewBudgetPlanService(repoFactory),
 	)
 
-	// setup das rotas
+	// setup routes
 	router := routes.SetupRoutes(sFactory)
 
-	// aplica middleware JWT
+	// apply middleware JWT
 	if err := middleware.InitJWT(); err != nil {
 		log.Fatal(err)
 	}
 
-	// aplica middleware de CORS
+	// apply cors
 	cors := middleware.CORSMiddleware{BaseURL: "http://localhost:3000"}
 	handlerComCors := cors.Handler(router)
 

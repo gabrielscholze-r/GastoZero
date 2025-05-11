@@ -14,6 +14,11 @@ export default {
         containerbg: "var(--color-containerbg)",
         textcontainerbg: "var(--color-textcontainerbg)",
         text: "var(--color-text)",
+        blue100: "var(--color-blue-100)",
+        blue300: "var(--color-blue-300)",
+        blue500: "var(--color-blue-500)",
+        blue700: "var(--color-blue-700)",
+        blue900: "var(--color-blue-900)",
       },
       fontFamily: {
         display: ["JetBrains Mono", "monospace"],

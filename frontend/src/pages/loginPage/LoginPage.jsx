@@ -23,7 +23,8 @@ export default function LoginPage() {
             toast.success('Logged in successfully!');
             navigate('/home');
         } catch (e) {
-            toast.error(`Error logging in: ${e.message}`);
+            console.log(e)
+            toast.error(`${e.message}`);
         }
     };
 

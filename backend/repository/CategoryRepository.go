@@ -3,7 +3,10 @@ package repository
 import (
 	"backend/model"
 	"context"
+	"database/sql"
+	"errors"
 	"github.com/uptrace/bun"
+	"strings"
 )
 
 type CategoryRepository interface {
@@ -56,7 +59,7 @@ func (r *categoryRepository) FindById(id int) (*model.Category, error) {
 func (r *categoryRepository) FindAll() ([]model.Category, error) {
 	ctx := context.Background()
 	var categories []model.Category
-	err := r.db.NewSelect().Model(categories).Scan(ctx, categories)
+	err := r.db.NewSelect().Model(&categories).Scan(ctx)
 	return categories, err
 }
 
@@ -64,6 +67,18 @@ func (r *categoryRepository) FindAll() ([]model.Category, error) {
 func (r *categoryRepository) GetByName(name string) (*model.Category, error) {
 	ctx := context.Background()
 	category := new(model.Category)
-	err := r.db.NewSelect().Model(category).Where("name = ?", name).Scan(ctx, category)
-	return category, err
+
+	err := r.db.NewSelect().
+		Model(category).
+		Where("name = ?", name).
+		Scan(ctx)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) || strings.Contains(err.Error(), "no rows in result set") {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return category, nil
 }

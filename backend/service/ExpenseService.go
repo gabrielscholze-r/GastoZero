@@ -31,7 +31,7 @@ func NewExpensesService(factory *repository.RepositoryBase) ExpenseService {
 func (s *expenseRepository) NewExpense(expense *model.Expense) error {
 	b, _ := s.budget.GetByID(expense.BudgetID)
 	if &b == nil {
-		return errors.New("budget not found")
+		return errors.New("plan not found")
 	}
 	c, _ := s.category.FindById(expense.CategoryID)
 

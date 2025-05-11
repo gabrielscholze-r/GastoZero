@@ -66,10 +66,7 @@ func (r *expensesRepository) Delete(id int) error {
 func (r *expensesRepository) GetByPlan(id int) ([]model.Expense, error) {
 	ctx := context.Background()
 	var expenses []model.Expense
-	err := r.db.NewSelect().Model(&expenses).Where("budgetID = ?", id).Scan(ctx, expenses)
-	if len(expenses) == 0 {
-		return nil, err
-	}
+	err := r.db.NewSelect().Model(&expenses).Where("budget_id = ?", id).Scan(ctx)
 	return expenses, err
 }
 

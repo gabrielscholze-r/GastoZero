@@ -1,10 +1,10 @@
-import axios from "axios";
+import API from "../../services/API";
 
 const defaultPath = "http://localhost:8080/";
 
 const login = async (email, password) => {
     try {
-        const response = await axios.post(defaultPath + "users/login", {
+        const response = await API.post(defaultPath + "users/login", {
             email,
             password,
         });
@@ -14,10 +14,10 @@ const login = async (email, password) => {
         if (token) {
             return token;
         } else {
-            throw new Error("Token não encontrado na resposta.");
+            throw new Error("Token not found");
         }
     } catch (error) {
-        throw new Error(error.response?.data?.message || "Erro ao fazer login.");
+        throw new Error(error.response?.data);
     }
 };
 

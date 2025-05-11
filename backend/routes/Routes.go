@@ -26,6 +26,7 @@ func SetupRoutes(serviceFactory *service.ServiceBase) http.Handler {
 	r.HandleFunc("/category/name", middleware.JWTAuth(categoryController.FindByName)).Methods("GET")
 	r.HandleFunc("/category", middleware.JWTAuth(categoryController.Update)).Methods("PUT")
 	r.HandleFunc("/category", middleware.JWTAuth(categoryController.Delete)).Methods("DELETE")
+	r.HandleFunc("/category", middleware.JWTAuth(categoryController.GetAll)).Methods("GET")
 
 	expenseController := controller.NewExpenseController(serviceFactory)
 	r.HandleFunc("/expense", middleware.JWTAuth(expenseController.NewExpense)).Methods("POST")

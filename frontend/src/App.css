@@ -4,13 +4,25 @@
   --color-primary: #5067AA;
   --color-blue-light: #86A6DE;
   --color-blue-dark: #324F7B;
+
+  --color-yellow: #d6ccf5;
+  --color-gold: #a3a1c5;
+  --color-gray-light: #eae9f0;
+  --color-gray-dark: #78788a;
+  --color-black: #3a3a4a;
+
+  --color-bgdark: oklch(0.93 0.01 270);
   --color-bglight: #F8F8F8;
-  --bgdark: #F8F8F8;
 
   --color-containerbg: oklch(0.35 0.1 254.51);
   --color-textcontainerbg: #f8f8f8;
   --color-text: #061a32;
-  --color-bgdark: oklch(0.93 0.01 270);
-  
+
+  --color-blue-100: #e8edfa;
+  --color-blue-300: #b4c2e9;
+  --color-blue-500: #7283c6;
+  --color-blue-700: #47539c;
+  --color-blue-900: #2b3564;
+
   --font-display: "Roboto Mono", "monospace";
 }
