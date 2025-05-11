@@ -60,7 +60,7 @@ export default function ProtectedSidebar({setIsOpen, setPlan, selectedPlan}) {
                         <div key={planItem.id} onClick={() => handleSetPlan(planItem)}>
                             <p
                                 className={`indent-4 my-2 p-1 hover:cursor-pointer hover:opacity-70 ${
-                                    planItem.id === selectedPlan.id ? 'text-red-500 font-bold' : ''
+                                    planItem.id === selectedPlan.id ? 'underline font-bold' : ''
                                 }`}
                             >
                                 {planItem.name}

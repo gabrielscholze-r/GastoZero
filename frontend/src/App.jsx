@@ -73,7 +73,11 @@ function AppContent() {
                     <Route path="/login" element={<LoginPage/>}/>
                     <Route path="/register" element={<Register/>}/>
                     <Route path="*" element={<NotFound/>}/>
-                    <Route path="/plan" element={<Plan data={plan}/>}/>
+                    <Route path="/plan" element={
+                        <ProtectedRoute isAuthenticated={isAuthenticated}>
+                            <Plan data={plan}/>
+                        </ProtectedRoute>
+                    }/>
                 </Routes>
             </div>
         </div>

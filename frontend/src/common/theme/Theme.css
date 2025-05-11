@@ -12,7 +12,7 @@
     --color-textcontainerbg: #f8f8f8;
     --color-text: #061a32;
 
-    --font-display: "JetBrains Mono", monospace;
+    --font-display: "Roboto Mono", monospace;
 }
 [data-theme="dark"] {
     --color-primary: oklch(0.6 0.16 260);
@@ -24,6 +24,6 @@
     --color-bgdark: #061a32;
     --color-bglight: oklch(0.3 0.02 270);
     --color-text: #ffffff;
-    --color-containerbg: oklch(0.44 0.1021 254.51); /* Opção mais escura para o modo escuro */
-    --color-textcontainerbg: #f8f8f8; /* A cor de texto pode ser a mesma */
+    --color-containerbg: oklch(0.44 0.1021 254.51);
+    --color-textcontainerbg: #f8f8f8;
 }
