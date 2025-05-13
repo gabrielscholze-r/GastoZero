@@ -28,6 +28,7 @@ CREATE TABLE expenses
     amount       DOUBLE PRECISION NOT NULL,
     description  TEXT,
     category_id  INT REFERENCES category (id),
+    category_name  TEXT REFERENCES category (name),
     date         TIMESTAMPTZ      NOT NULL,
     is_recurring BOOLEAN DEFAULT FALSE,
     budget_id    INT REFERENCES budget_plan (id)

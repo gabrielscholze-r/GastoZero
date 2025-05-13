@@ -17,6 +17,7 @@ export default function Plan({ data }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    setIsAdding(false)
     if (!data || Object.keys(data).length === 0) {
       navigate("/home");
     } else {
@@ -25,18 +26,15 @@ export default function Plan({ data }) {
         setLocalData(data);
         loadExpenses(data.id);
         loadCategories()
+        console.log(expenses)
       }, 100);
-      console.log(categories)
     }
   }, [data, navigate]);
 
   const loadExpenses = async (planId) => {
     const result = await getExpensesByPlan(planId);
-    if (result.success) {
-      setExpenses(result.data ?? []);
-    } else {
-      setError(result.error);
-    }
+    setExpenses(result.data ?? []);
+
   };
 
   const loadCategories = async () => {
@@ -53,6 +51,7 @@ export default function Plan({ data }) {
         amount: newExpense.amount,
         description: newExpense.description,
         category_id: newExpense.category_id,
+        category_name: newExpense.category_name,
         date: newExpense.date,
         is_recurring: newExpense.is_recurring,
         budget_id: newExpense.budget_id,
@@ -155,16 +154,14 @@ export default function Plan({ data }) {
                   categories={categories}
                   setIsAdding={setIsAdding}
                   budgetId={localData.id}
+                  setCategories={setCategories}
                 />
               )}
               {expenses.map((expense) => (
-                <tr
-                  key={expense.id}
-                  className="odd:bg-zinc-900 even:bg-zinc-800 text-white"
-                >
+                <tr key={expense.id} className="odd:bg-zinc-900 even:bg-zinc-800 text-white">
                   <td className="p-2">{expense.date}</td>
                   <td className="p-2">{expense.description}</td>
-                  <td className="p-2">{expense.category_id}</td>
+                  <td className="p-2">{expense.category_name}</td>
                   <td className="p-2">R$ {expense.amount.toFixed(2)}</td>
                   <td className="p-2">{expense.is_recurring ? "Yes" : "No"}</td>
                 </tr>

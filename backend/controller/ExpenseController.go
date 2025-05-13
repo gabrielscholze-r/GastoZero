@@ -32,12 +32,13 @@ func (ctrl *expenseController) NewExpense(w http.ResponseWriter, r *http.Request
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 	newExpense := model.Expense{
-		Amount:      e.Amount,
-		Description: e.Description,
-		CategoryID:  e.CategoryID,
-		Date:        e.Date,
-		IsRecurring: e.IsRecurring,
-		BudgetID:    e.BudgetID,
+		Amount:       e.Amount,
+		Description:  e.Description,
+		CategoryID:   e.CategoryID,
+		CategoryName: e.CategoryName,
+		Date:         e.Date,
+		IsRecurring:  e.IsRecurring,
+		BudgetID:     e.BudgetID,
 	}
 	err := ctrl.service.NewExpense(&newExpense)
 	if err != nil {
