@@ -4,7 +4,7 @@ import {motion, AnimatePresence} from "framer-motion";
 import {FaInfoCircle} from "react-icons/fa";
 import {MdDelete} from "react-icons/md";
 import PlanAddEntry from "./PlanAddEntry";
-import {getCategories, getExpensesByPlan, deleteExpense} from "./Actions";
+import {getCategories, getExpensesByPlan, deleteExpense, updatePlanAmout} from "./Actions";
 
 export default function Plan({data}) {
     const navigate = useNavigate();
@@ -47,9 +47,17 @@ export default function Plan({data}) {
         setCategories(result ?? []);
     };
 
-    const handleAddExpense = (newExpense) => {
+    const handleAddExpense = async (newExpense) => {
+        
+        const r = await updatePlanAmout(newExpense.budget_id, newExpense.amount,true)
+        if (!r) {
+            console.log("Error updating amount")
+        }
+        data.totalAmount+=newExpense.amount
         setExpenses((prev) => [...prev, newExpense]);
         setIsAdding(false);
+        
+        
     };
 
     const handleHeaderClick = (column) => {
@@ -60,8 +68,8 @@ export default function Plan({data}) {
             setSortDirection("asc");
         }
     };
-    const handleTempList = (id, planID) => {
-        const identifier = `${id}:${planID}`;
+    const handleTempList = (id, planID,amount) => {
+        const identifier = `${id}:${planID}:${amount}`;
         setTempList(prev => {
             if (prev.includes(identifier)) {
                 return prev.filter(item => item !== identifier);
@@ -84,12 +92,15 @@ export default function Plan({data}) {
     const handleDeleteExpense = async () => {
         try {
             for (const item of tempList) {
-                const [id, plan] = item.split(":").map(Number);
+                const [id, plan, amount] = item.split(":").map(Number);
+                data.totalAmount-=amount
                 const success = await deleteExpense(id, plan);
                 if (!success) {
                     throw new Error("Failed executing");
                 }
+                await updatePlanAmout(plan,amount,false)
             }
+            
             await loadExpenses(localData.id);
             setTempList([]);
             setIsEditing(false);
@@ -209,7 +220,7 @@ export default function Plan({data}) {
                             />
                         )}
                         {sortedExpenses.map((expense) => {
-                            const identifier = `${expense.id}:${expense.budget_id}`;
+                            const identifier = `${expense.id}:${expense.budget_id}:${expense.amount}`;
                             const isSelected = tempList.includes(identifier);
 
                             return (
@@ -226,7 +237,7 @@ export default function Plan({data}) {
                                     <td className="p-3">{expense.is_recurring ? "Yes" : "No"}</td>
                                     {isEditing && (
                                         <td className="p-2"
-                                            onClick={() => handleTempList(expense.id, expense.budget_id)}>
+                                            onClick={() => handleTempList(expense.id, expense.budget_id, expense.amount)}>
                                             <div className="flex items-center justify-center">
                                                 <div
                                                     className={`text-white ${

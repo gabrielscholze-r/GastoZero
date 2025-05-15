@@ -108,11 +108,12 @@ func (ctrl *budgetPlanController) UpdateAmount(w http.ResponseWriter, r *http.Re
 	var req struct {
 		ID     int     `json:"id"`
 		Amount float64 `json:"amount"`
+		Add    bool    `json:"add"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
-	err := ctrl.service.UpdateAmount(req.ID, req.Amount)
+	err := ctrl.service.UpdateAmount(req.ID, req.Amount, req.Add)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
