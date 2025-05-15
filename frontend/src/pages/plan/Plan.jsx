@@ -2,8 +2,9 @@ import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {motion, AnimatePresence} from "framer-motion";
 import {FaInfoCircle} from "react-icons/fa";
+import {MdDelete} from "react-icons/md";
 import PlanAddEntry from "./PlanAddEntry";
-import {getCategories, getExpensesByPlan} from "./Actions";
+import {getCategories, getExpensesByPlan, deleteExpense} from "./Actions";
 
 export default function Plan({data}) {
     const navigate = useNavigate();
@@ -16,9 +17,14 @@ export default function Plan({data}) {
     const [isAdding, setIsAdding] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [tempList, setTempList] = useState([]);
+
 
     useEffect(() => {
         setIsAdding(false);
+        setIsEditing(false);
+        setTempList([]);
         if (!data || Object.keys(data).length === 0) {
             navigate("/home");
         } else {
@@ -54,6 +60,16 @@ export default function Plan({data}) {
             setSortDirection("asc");
         }
     };
+    const handleTempList = (id, planID) => {
+        const identifier = `${id}:${planID}`;
+        setTempList(prev => {
+            if (prev.includes(identifier)) {
+                return prev.filter(item => item !== identifier);
+            } else {
+                return [...prev, identifier];
+            }
+        });
+    };
 
     const sortedExpenses = [...expenses].sort((a, b) => {
         if (!activeColumn) return 0;
@@ -65,20 +81,48 @@ export default function Plan({data}) {
         return 0;
     });
 
+    const handleDeleteExpense = async () => {
+        try {
+            for (const item of tempList) {
+                const [id, plan] = item.split(":").map(Number);
+                const success = await deleteExpense(id, plan);
+                if (!success) {
+                    throw new Error("Falha ao excluir item.");
+                }
+            }
+            await loadExpenses(localData.id);
+            setTempList([]);
+            setIsEditing(false);
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
     if (!data || Object.keys(data).length === 0) return null;
+
 
     const ExpenseList = () => {
         return (
             <div className="flex flex-col gap-4">
                 <div className="flex gap-4 items-center">
-                    {!isAdding && (
-                        <button
-                            onClick={() => setIsAdding(true)}
-                            className="bg-blue-700 transition-opacity hover:opacity-70 text-white px-4 py-2 rounded shadow cursor-pointer"
-                            disabled={isLoading}
-                        >
-                            {isLoading ? "Loading..." : "+ Add Entry"}
-                        </button>
+                    {(!isAdding && !isEditing) && (
+                        <>
+                            <button
+                                onClick={() => setIsAdding(true)}
+                                className="bg-blue-700 transition-opacity hover:opacity-70 text-white px-4 py-2 rounded shadow cursor-pointer"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? "Loading..." : "+ Add Entry"}
+                            </button>
+                            <button
+                                className="bg-blue-700 transition-opacity hover:opacity-70 text-white px-4 py-2 rounded shadow cursor-pointer"
+                                disabled={isLoading}
+                                onClick={() => setIsEditing(true)}
+                            >
+                                Edit
+                            </button>
+                        </>
+
                     )}
                     {isAdding && (
                         <div className="flex gap-4">
@@ -98,6 +142,25 @@ export default function Plan({data}) {
                             </button>
                         </div>
                     )}
+                    {isEditing && (
+                        <div className="flex gap-4">
+                            <button
+                                onClick={handleDeleteExpense}
+                                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow"
+                            >
+                                Save
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setIsEditing(false)
+                                    setTempList([]);
+                                }}
+                                className="text-white px-4 py-2 rounded hover:underline"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    )}
                     {error && <span className="text-red-500 text-sm">{error}</span>}
                 </div>
 
@@ -106,28 +169,31 @@ export default function Plan({data}) {
                         <thead>
                         <tr className="bg-blue-700 text-white cursor-pointer">
                             {[
-                                { key: "date", label: "Date" },
-                                { key: "description", label: "Description" },
-                                { key: "category_name", label: "Category" },
-                                { key: "amount", label: "Amount" },
-                                { key: "is_recurring", label: "Recurring" },
-                            ].map(({ key, label }) => (
-                                <th
-                                    key={key}
-                                    className={`p-2 text-left ${
-                                        activeColumn === key ? "bg-blue-900" : ""
-                                    } ${isAdding ? "opacity-50 cursor-not-allowed" : ""}`}
-                                    onClick={() => {
-                                        if (isAdding) return;
-                                        handleHeaderClick(key);
-                                    }}
-                                >
-                                    {label}
-                                    {activeColumn === key && (
-                                        <span className="ml-1">{sortDirection === "asc" ? "▲" : "▼"}</span>
-                                    )}
-                                </th>
-                            ))}
+                                {key: "date", label: "Date"},
+                                {key: "description", label: "Description"},
+                                {key: "category_name", label: "Category"},
+                                {key: "amount", label: "Amount"},
+                                {key: "is_recurring", label: "Recurring"},
+                                isEditing ? {key: "delete", label: "Delete"} : {key: "", label: ""}
+                            ].map(({key, label}) =>
+                                    (key.length > 0 && label.length > 0) && (
+                                        <th
+                                            key={key}
+                                            className={`p-2 text-center ${
+                                                activeColumn === key ? "bg-blue-900" : ""
+                                            } ${isAdding ? "opacity-50 cursor-not-allowed" : ""}`}
+                                            onClick={() => {
+                                                if (isAdding || isEditing) return;
+                                                handleHeaderClick(key);
+                                            }}
+                                        >
+                                            {label}
+                                            {activeColumn === key && (
+                                                <span className="ml-1">{sortDirection === "asc" ? "▲" : "▼"}</span>
+                                            )}
+                                        </th>
+                                    )
+                            )}
                         </tr>
                         </thead>
 
@@ -142,15 +208,39 @@ export default function Plan({data}) {
                                 setCategories={setCategories}
                             />
                         )}
-                        {sortedExpenses.map((expense) => (
-                            <tr key={expense.id} className="odd:bg-zinc-900 even:bg-zinc-800 text-white">
-                                <td className="p-2">{expense.date}</td>
-                                <td className="p-2">{expense.description}</td>
-                                <td className="p-2">{expense.category_name}</td>
-                                <td className="p-2">R$ {Number(expense.amount).toFixed(2)}</td>
-                                <td className="p-2">{expense.is_recurring ? "Yes" : "No"}</td>
-                            </tr>
-                        ))}
+                        {sortedExpenses.map((expense) => {
+                            const identifier = `${expense.id}:${expense.budget_id}`;
+                            const isSelected = tempList.includes(identifier);
+
+                            return (
+                                <tr
+                                    key={expense.id}
+                                    className={`odd:bg-zinc-900 even:bg-zinc-800 text-white text-center transition-colors duration-200 ${
+                                        isEditing && isSelected ? 'bg-zinc-700 opacity-60' : ''
+                                    }`}
+                                >
+                                    <td className="p-2">{expense.date}</td>
+                                    <td className="p-2">{expense.description}</td>
+                                    <td className="p-2">{expense.category_name}</td>
+                                    <td className="p-2">R$ {Number(expense.amount).toFixed(2)}</td>
+                                    <td className="p-2">{expense.is_recurring ? "Yes" : "No"}</td>
+                                    {isEditing && (
+                                        <td className="p-2"
+                                            onClick={() => handleTempList(expense.id, expense.budget_id)}>
+                                            <div className="flex items-center justify-center">
+                                                <div
+                                                    className={`text-white ${
+                                                        isSelected ? 'bg-gray-500' : 'bg-red-500'
+                                                    } w-fit rounded hover:scale-105 transition-transform cursor-pointer p-2 text-lg`}
+                                                >
+                                                    <MdDelete/>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    )}
+                                </tr>
+                            );
+                        })}
                         </tbody>
                     </table>
                 </div>

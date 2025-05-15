@@ -27,7 +27,6 @@ export const getExpensesByPlan = async (planId) => {
         const response = await API.get(`${BASE_URL}/expense/plan`, {
             params: {id: planId}
         });
-        console.log(response.data)
         return response
     } catch (error) {
         throw new Error(error.response?.data?.message || error.message || "Failed to get expenses");
@@ -37,7 +36,6 @@ export const getExpensesByPlan = async (planId) => {
 export const getCategories = async () => {
     try {
         const response = await API.get(`${BASE_URL}/category`)
-        console.log("caregorias: ", response)
         return response.data
 
     } catch (error) {
@@ -53,3 +51,20 @@ export const addNewCategory = async (name) => {
         throw new Error(error.response?.data?.message || error.message);
     }
 };
+
+export const deleteExpense = async (id, plan) => {
+    try {
+        const response = await API.delete(`${BASE_URL}/expense`, {
+            data: {
+                "id": id,
+                "plan_id": plan
+            }});
+        if (response.status === 200 || response.status === 204) {
+            return true;
+        } else {
+            throw new Error("Error deleting");
+        }
+    } catch (error) {
+        throw new Error(error.response?.data?.message || error.message);
+    }
+}
