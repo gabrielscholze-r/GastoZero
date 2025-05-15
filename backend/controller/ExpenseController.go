@@ -98,11 +98,20 @@ func (ctrl *expenseController) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	err := ctrl.service.DeleteExpense(req.ID, req.Plan)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(w).Encode(map[string]string{
+		"message": "Expense deleted successfully",
+	})
+	if err != nil {
+		return
+	}
+
 }

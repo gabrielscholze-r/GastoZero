@@ -33,7 +33,7 @@ func InitJWT() error {
 	return nil
 }
 func GenerateJWT(username string) (string, error) {
-	expirationTime := time.Now().Add(30 * time.Minute)
+	expirationTime := time.Now().Add(2 * time.Hour)
 
 	claims := &Claims{
 		Username: username,
