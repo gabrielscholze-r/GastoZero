@@ -87,7 +87,7 @@ export default function Plan({data}) {
                 const [id, plan] = item.split(":").map(Number);
                 const success = await deleteExpense(id, plan);
                 if (!success) {
-                    throw new Error("Falha ao excluir item.");
+                    throw new Error("Failed executing");
                 }
             }
             await loadExpenses(localData.id);
@@ -109,13 +109,13 @@ export default function Plan({data}) {
                         <>
                             <button
                                 onClick={() => setIsAdding(true)}
-                                className="bg-blue-700 transition-opacity hover:opacity-70 text-white px-4 py-2 rounded shadow cursor-pointer"
+                                className="bg-bgdark hover:opacity-80 transition-opacity text-white px-4 py-2 rounded-md shadow cursor-pointer border-2 border-gold"
                                 disabled={isLoading}
                             >
                                 {isLoading ? "Loading..." : "+ Add Entry"}
                             </button>
                             <button
-                                className="bg-blue-700 transition-opacity hover:opacity-70 text-white px-4 py-2 rounded shadow cursor-pointer"
+                                className="bg-bgdark hover:opacity-80 transition-opacity text-white px-4 py-2 rounded-md shadow cursor-pointer border-2 border-gold"
                                 disabled={isLoading}
                                 onClick={() => setIsEditing(true)}
                             >
@@ -130,13 +130,13 @@ export default function Plan({data}) {
                                 onClick={() => {
                                     document.getElementById("plan-entry-form")?.requestSubmit();
                                 }}
-                                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow"
+                                className="bg-bgdark hover:opacity-80 transition-opacity text-white px-4 py-2 rounded-md shadow border-2 border-gold"
                             >
                                 Save
                             </button>
                             <button
                                 onClick={() => setIsAdding(false)}
-                                className="text-white px-4 py-2 rounded hover:underline"
+                                className="bg-bgdark hover:opacity-80 transition-opacity text-white px-4 py-2 rounded-md hover:underline border-2 border-gold cursor-pointer"
                             >
                                 Cancel
                             </button>
@@ -146,7 +146,7 @@ export default function Plan({data}) {
                         <div className="flex gap-4">
                             <button
                                 onClick={handleDeleteExpense}
-                                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow"
+                                className="bg-bgdark hover:opacity-80 transition-opacity text-white px-4 py-2 rounded-md shadow border-2 border-gold"
                             >
                                 Save
                             </button>
@@ -155,7 +155,7 @@ export default function Plan({data}) {
                                     setIsEditing(false)
                                     setTempList([]);
                                 }}
-                                className="text-white px-4 py-2 rounded hover:underline"
+                                className="bg-bgdark hover:opacity-80 transition-opacity text-white px-4 py-2 rounded-md border-2 border-gold cursor-pointer"
                             >
                                 Cancel
                             </button>
@@ -167,7 +167,7 @@ export default function Plan({data}) {
                 <div className="overflow-x-auto max-h-[300px] overflow-y-auto rounded">
                     <table className="w-full table-auto border-collapse text-sm">
                         <thead>
-                        <tr className="bg-blue-700 text-white cursor-pointer">
+                        <tr className="bg-primary text-white cursor-pointer ">
                             {[
                                 {key: "date", label: "Date"},
                                 {key: "description", label: "Description"},
@@ -179,9 +179,9 @@ export default function Plan({data}) {
                                     (key.length > 0 && label.length > 0) && (
                                         <th
                                             key={key}
-                                            className={`p-2 text-center ${
-                                                activeColumn === key ? "bg-blue-900" : ""
-                                            } ${isAdding ? "opacity-50 cursor-not-allowed" : ""}`}
+                                            className={`py-2 text-center opacity-50 ${
+                                                activeColumn === key ? "opacity-100" : ""
+                                            } ${isAdding ? "opacity-90 cursor-not-allowed" : ""}`}
                                             onClick={() => {
                                                 if (isAdding || isEditing) return;
                                                 handleHeaderClick(key);
@@ -215,15 +215,15 @@ export default function Plan({data}) {
                             return (
                                 <tr
                                     key={expense.id}
-                                    className={`odd:bg-zinc-900 even:bg-zinc-800 text-white text-center transition-colors duration-200 ${
-                                        isEditing && isSelected ? 'bg-zinc-700 opacity-60' : ''
+                                    className={`bg-bgdark text-white text-center transition-colors duration-200 border-b-2 border-t-2 border-gold rounded-xl ${
+                                        isEditing && isSelected ? 'bg-gray-dark opacity-60' : ''
                                     }`}
                                 >
-                                    <td className="p-2">{expense.date}</td>
-                                    <td className="p-2">{expense.description}</td>
-                                    <td className="p-2">{expense.category_name}</td>
-                                    <td className="p-2">R$ {Number(expense.amount).toFixed(2)}</td>
-                                    <td className="p-2">{expense.is_recurring ? "Yes" : "No"}</td>
+                                    <td className="p-3">{expense.date}</td>
+                                    <td className="p-3">{expense.description}</td>
+                                    <td className="p-3">{expense.category_name}</td>
+                                    <td className="p-3">R$ {Number(expense.amount).toFixed(2)}</td>
+                                    <td className="p-3">{expense.is_recurring ? "Yes" : "No"}</td>
                                     {isEditing && (
                                         <td className="p-2"
                                             onClick={() => handleTempList(expense.id, expense.budget_id)}>

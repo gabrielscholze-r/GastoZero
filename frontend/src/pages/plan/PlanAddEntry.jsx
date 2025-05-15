@@ -105,7 +105,7 @@ export default function PlanAddEntry({onSave,onCancel,budgetId,categories,setCat
                 {showDropdown && filteredCategories.length > 0 && (
                     <DropdownPortal>
                         <ul
-                            className="absolute z-50 bg-zinc-800 border border-gray-600 rounded shadow-lg max-h-40 overflow-y-auto"
+                            className="absolute z-50 bg-bgdark border border-gold rounded shadow-lg max-h-40 overflow-y-auto"
                             style={{
                                 position: "absolute",
                                 top: `${dropdownPos.top}px`,
@@ -116,7 +116,7 @@ export default function PlanAddEntry({onSave,onCancel,budgetId,categories,setCat
                             {filteredCategories.map((cat) => (
                                 <li
                                     key={cat.id}
-                                    className="p-2 hover:bg-zinc-700 cursor-pointer"
+                                    className="p-2 opacity-80 hover:opacity-100 cursor-pointer text-text"
                                     onMouseDown={() => {
                                         setCategoryInput(cat.name);
                                         setValue("category_input", cat.name);
@@ -131,7 +131,6 @@ export default function PlanAddEntry({onSave,onCancel,budgetId,categories,setCat
                 )}
             </td>
 
-            {/* Valor */}
             <td className="p-2 w-[15%]">
                 <input
                     type="number"

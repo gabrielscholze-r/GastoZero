@@ -5,7 +5,7 @@
   --color-gray-light: #eae9f0;
   --color-gray-dark: #78788a;
   --color-black: #3a3a4a;
-  --color-bgdark: oklch(0.93 0.01 270);
+  --color-bgdark: #061a32;
   --color-bglight: oklch(0.99 0 0);
 
   --color-containerbg: oklch(0.35 0.1 254.51);
@@ -29,7 +29,7 @@
   --color-gray-dark: #505064;
   --color-black: #1c1c28;
   --color-bgdark: #061a32;
-  --color-bglight: oklch(0.3 0.02 270);
+  --color-bglight: #061a32;
   --color-text: #ffffff;
   --color-containerbg: oklch(0.44 0.1021 254.51);
   --color-textcontainerbg: #f8f8f8;

@@ -53,7 +53,7 @@ function AppContent() {
     }, [navigate]);
 
     return (
-        <div className="flex flex-col md:flex-row w-full font-display min-h-screen bg-bgdark overflow-hidden">
+        <div className="flex flex-col md:flex-row w-full font-display min-h-screen bg-bglight overflow-hidden">
             <Sidebar
                 isOpen={menuOpen}
                 setIsOpen={setMenuOpen}
