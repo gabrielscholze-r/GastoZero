@@ -56,5 +56,5 @@ func (s *budgetPlanService) UpdateAmount(id int, amount float64, add bool) error
 		i.TotalAmount = i.TotalAmount - amount
 	}
 
-	return s.repository.UpdateAmount(id, i.TotalAmount)
+	return s.repository.Update(i)
 }
