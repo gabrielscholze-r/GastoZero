@@ -88,3 +88,46 @@ export const updatePlanAmout = async (planID, newAmount, add) => {
     throw new Error(error.message);
   }
 };
+
+
+export const deletePlan = async (id) => {
+  try {
+    const response = await API.delete(`${BASE_URL}/plan`, {
+      params: {
+        id: id,
+      },
+    });
+    if (response.status === 200 || response.status === 204) {
+      return true;
+    } else {
+      throw new Error("Error deleting");
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+
+}
+
+export const updatePlan = async (planObject) => {
+  try {
+    const r = await API.put(`${BASE_URL}/plan`, {
+      id: planObject.id,
+      name: planObject.name,
+      description: planObject.description,
+      amount: planObject.amount,
+      is_recurring: planObject.is_recurring,
+      category_id: planObject.category_id,
+      category_name: planObject.category_name,
+      budget_id: planObject.budget_id,
+    });
+
+    if (r.status === 200) {
+      return true;
+    } else {
+      throw new Error("Error updating plan");
+
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}

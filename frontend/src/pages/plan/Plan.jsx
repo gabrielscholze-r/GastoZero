@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { FaGear } from "react-icons/fa6";
 import { FaInfoCircle } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import PlanAddEntry from "./PlanAddEntry";
@@ -11,6 +12,7 @@ import {
   updatePlanAmout,
 } from "./Actions";
 import { useQueryClient } from "@tanstack/react-query";
+import PlanEdit from "./PlanEdit.jsx";
 
 export default function Plan({ data }) {
   const navigate = useNavigate();
@@ -27,6 +29,7 @@ export default function Plan({ data }) {
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [tempList, setTempList] = useState([]);
+  const [isEditingPlan, setIsEditingPlan] = useState(false);
 
   useEffect(() => {
     setIsAdding(false);
@@ -66,19 +69,15 @@ export default function Plan({ data }) {
       return;
     }
 
-    // 1) Atualiza lista de despesas local
     setExpenses((prev) => [...prev, newExpense]);
     setIsAdding(false);
 
-    // 2) Atualiza o total localmente
     setLocalData((prev) => ({
       ...prev,
       totalAmount: prev.totalAmount + newExpense.amount,
     }));
 
-    // 3) Invalida e refaz cache de 'plans'
     queryClient.invalidateQueries(["plans"]);
-    // 4) Opcional: sincroniza localData com o plano atualizado no cache/API
     const allPlans = await queryClient.fetchQuery({ queryKey: ["plans"] });
     const updated = allPlans.find((p) => p.id === localData.id);
     if (updated) {
@@ -88,7 +87,6 @@ export default function Plan({ data }) {
 
   const handleDeleteExpense = async () => {
     try {
-      // para cada item selecionado
       for (const item of tempList) {
         const [id, planId, amount] = item.split(":").map(Number);
 
@@ -97,7 +95,6 @@ export default function Plan({ data }) {
 
         await updatePlanAmout(planId, amount, false);
 
-        // atualiza o total localmente
         setLocalData((prev) => ({
           ...prev,
           totalAmount: prev.totalAmount - amount,
@@ -108,8 +105,7 @@ export default function Plan({ data }) {
       setTempList([]);
       setIsEditing(false);
 
-      // invalida e refaz cache de 'plans'
-      queryClient.invalidateQueries(["plans"]);
+      await queryClient.invalidateQueries(["plans"]);
       const allPlans = await queryClient.fetchQuery({ queryKey: ["plans"] });
       const updated = allPlans.find((p) => p.id === localData.id);
       if (updated) {
@@ -151,7 +147,6 @@ export default function Plan({ data }) {
 
   const ExpenseList = () => (
     <div className="flex flex-col gap-4">
-      {/* botões de Add / Edit */}
       <div className="flex gap-4 items-center">
         {!isAdding && !isEditing && (
           <>
@@ -170,7 +165,6 @@ export default function Plan({ data }) {
             </button>
           </>
         )}
-        {/* salvar / cancelar em add */}
         {isAdding && (
           <div className="flex gap-4">
             <button
@@ -189,7 +183,6 @@ export default function Plan({ data }) {
             </button>
           </div>
         )}
-        {/* salvar / cancelar em delete */}
         {isEditing && (
           <div className="flex gap-4">
             <button
@@ -212,7 +205,6 @@ export default function Plan({ data }) {
         {error && <span className="text-red-500 text-sm">{error}</span>}
       </div>
 
-      {/* tabela de despesas */}
       <div className="overflow-x-auto max-h-[300px] overflow-y-auto rounded">
         <table className="w-full table-auto border-collapse text-sm">
           <thead>
@@ -319,27 +311,39 @@ export default function Plan({ data }) {
             transition={{ type: "tween", duration: 0.3 }}
             className="w-11/12 h-10/12 bg-containerbg rounded p-6 text-white z-50 shadow-lg overflow-visible"
           >
+
             <div className="flex justify-between mb-5">
               <div className="flex items-center gap-2 mb-4">
                 <h2 className="text-2xl font-bold">{localData.name}</h2>
                 <div className="relative flex items-center">
-                  <FaInfoCircle
-                    size={20}
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                    className="cursor-pointer hover:scale-110 transition-transform"
-                  />
+                  {(localData.description.length>0) && (<FaInfoCircle
+                      size={20}
+                      onMouseEnter={() => setShowTooltip(true)}
+                      onMouseLeave={() => setShowTooltip(false)}
+                      className="cursor-pointer hover:scale-110 transition-transform"
+                  />)}
+
                   {showTooltip && (
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-blue-dark text-sm text-white p-2 rounded shadow-lg w-64">
                       {localData.description}
                     </div>
                   )}
                 </div>
+                <button disabled={isEditingPlan} onClick={() => {
+                  setIsEditingPlan(true)
+                }}>
+                  <FaGear
+                      size={20}
+                      className="cursor-pointer hover:rotate-45 transition-transform"/>
+                </button>
               </div>
               <p className="text-sm text-zinc-400">
                 Total: R$ {localData.totalAmount.toFixed(2)}
               </p>
             </div>
+            {isEditingPlan && (
+                <PlanEdit setIsOpened={setIsEditingPlan} isOpened={isEditingPlan} data={localData}/>
+            )}
             <ExpenseList />
           </motion.div>
         )}
