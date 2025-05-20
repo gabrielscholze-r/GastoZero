@@ -3,8 +3,10 @@ import React, {useEffect, useState} from "react";
 import {deletePlan, updatePlan} from "./Actions.jsx";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
+import {usePlans} from "../../hooks/usePlans.jsx";
 
 export default function PlanEdit({isOpened, setIsOpened, data}) {
+    const { refetch } = usePlans();
     const navigate = useNavigate();
     const [del, setDel] = useState(false);
     const [name, setName] = useState("");
@@ -22,6 +24,7 @@ export default function PlanEdit({isOpened, setIsOpened, data}) {
             if (result) {
                 setIsOpened(false);
                 toast.success('Plan has been deleted successfully!');
+                await refetch();
                 navigate('/home');
             }
         }
@@ -35,6 +38,7 @@ export default function PlanEdit({isOpened, setIsOpened, data}) {
                 navigate('/plan');
             }
         }
+
     }
 
 
@@ -78,6 +82,9 @@ export default function PlanEdit({isOpened, setIsOpened, data}) {
                             <MdDelete size={20}/>
                         </div>
                     </button>
+                    {del && (
+                        <h1 className={`text-center mx-auto text-red-400 text-xl font-extrabold`}>Warning! Plan will be deleted</h1>
+                    )}
                     <button className="w-11/12 mt-auto bg-bglight py-4 rounded mx-auto cursor-pointer hover:scale-105 transition-transform" onClick={handleSave}>
                         <h1 className="text-2xl">Save</h1>
                     </button>

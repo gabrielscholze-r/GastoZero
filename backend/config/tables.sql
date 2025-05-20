@@ -31,7 +31,7 @@ CREATE TABLE expenses
     category_name  TEXT REFERENCES category (name),
     date         TIMESTAMPTZ      NOT NULL,
     is_recurring BOOLEAN DEFAULT FALSE,
-    budget_id    INT REFERENCES budget_plan (id)
+    budget_id      INT REFERENCES budget_plan (id) ON DELETE CASCADE
 );
 
 CREATE TABLE budget_plan_expenses

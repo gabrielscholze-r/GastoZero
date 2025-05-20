@@ -45,7 +45,6 @@ func (r *budgetPlanRepository) Delete(id int) error {
 	_, err := r.db.NewDelete().
 		Model(&model.BudgetPlan{}).
 		Where("id = ?", id).
-		Limit(1).
 		Exec(ctx)
 	return err
 }
@@ -75,31 +74,10 @@ func (r *budgetPlanRepository) UpdateAmount(id int, newAmount float64) error {
 // Update replaces the existing BudgetPlan data and its related expenses.
 func (r *budgetPlanRepository) Update(plan *model.BudgetPlan) error {
 	ctx := context.Background()
-
-	_, err := r.db.NewUpdate().Model(plan).Where("id = ?", plan.ID).Exec(ctx)
-	if err != nil {
-		return err
-	}
-
-	_, err = r.db.NewDelete().
-		Model((*model.BudgetPlanExpense)(nil)).
-		Where("budget_plan_id = ?", plan.ID).
-		Exec(ctx)
-	if err != nil {
-		return err
-	}
-
-	for _, expense := range plan.Expenses {
-		link := &model.BudgetPlanExpense{
-			BudgetPlanID: plan.ID,
-			ExpenseID:    expense.ID,
-		}
-		if _, err := r.db.NewInsert().Model(link).Exec(ctx); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	_, err := r.db.NewUpdate().Model(plan).
+		Column("name", "description").
+		Where("id = ?", plan.ID).Exec(ctx)
+	return err
 }
 
 // GetByID retrieves a BudgetPlan by its ID along with its related expenses.

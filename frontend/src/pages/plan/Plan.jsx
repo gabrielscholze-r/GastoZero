@@ -77,7 +77,7 @@ export default function Plan({ data }) {
       totalAmount: prev.totalAmount + newExpense.amount,
     }));
 
-    queryClient.invalidateQueries(["plans"]);
+    await queryClient.invalidateQueries(["plans"]);
     const allPlans = await queryClient.fetchQuery({ queryKey: ["plans"] });
     const updated = allPlans.find((p) => p.id === localData.id);
     if (updated) {
@@ -342,7 +342,7 @@ export default function Plan({ data }) {
               </p>
             </div>
             {isEditingPlan && (
-                <PlanEdit setIsOpened={setIsEditingPlan} isOpened={isEditingPlan} data={localData}/>
+                <PlanEdit setIsOpened={setIsEditingPlan} isOpened={isEditingPlan} data={localData} setLocalData={setLocalData}/>
             )}
             <ExpenseList />
           </motion.div>

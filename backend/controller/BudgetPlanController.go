@@ -5,6 +5,7 @@ import (
 	"backend/model/request"
 	"backend/service"
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -51,33 +52,39 @@ func (ctrl *budgetPlanController) CreatePlan(w http.ResponseWriter, r *http.Requ
 	}
 	email, ok := r.Context().Value("email").(string)
 	if !ok {
+		log.Println(ok)
 		http.Error(w, "Email not found", http.StatusUnauthorized)
 		return
 	}
 	err := ctrl.service.Create(&budgetPlat, email)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(budgetPlat); err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 func (ctrl *budgetPlanController) GetByUser(w http.ResponseWriter, r *http.Request) {
 	email, ok := r.Context().Value("email").(string)
 	if !ok {
+		log.Println(ok)
 		http.Error(w, "Email not found", http.StatusUnauthorized)
 		return
 	}
 	user, err := ctrl.userService.FindByEmail(email)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	plans, err := ctrl.service.FindByUser(user.ID)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -88,6 +95,7 @@ func (ctrl *budgetPlanController) GetByUser(w http.ResponseWriter, r *http.Reque
 	w.WriteHeader(http.StatusOK)
 
 	if err = json.NewEncoder(w).Encode(plans); err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -96,10 +104,12 @@ func (ctrl *budgetPlanController) GetByUser(w http.ResponseWriter, r *http.Reque
 func (ctrl *budgetPlanController) Delete(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 	err = ctrl.service.Delete(id)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	w.WriteHeader(http.StatusOK)
@@ -111,10 +121,12 @@ func (ctrl *budgetPlanController) UpdateAmount(w http.ResponseWriter, r *http.Re
 		Add    bool    `json:"add"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 	err := ctrl.service.UpdateAmount(req.ID, req.Amount, req.Add)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	w.WriteHeader(http.StatusOK)
@@ -122,10 +134,12 @@ func (ctrl *budgetPlanController) UpdateAmount(w http.ResponseWriter, r *http.Re
 func (ctrl *budgetPlanController) Update(w http.ResponseWriter, r *http.Request) {
 	var plan model.BudgetPlan
 	if err := json.NewDecoder(r.Body).Decode(&plan); err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 	err := ctrl.service.Update(&plan)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	w.WriteHeader(http.StatusOK)

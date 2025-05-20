@@ -79,7 +79,7 @@ export default function ProtectedSidebar({setIsOpen, setPlan, selectedPlan}) {
 
             {showModal && (
                 <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-blue-dark/80">
-                    <div className="bg-containerbg text-white p-6 rounded-lg max-w-md shadow-lg h-2/4 w-2/4 z-[10000]">
+                    <div className="bg-containerbg text-white p-6 rounded-lg max-w-md shadow-lg h-max w-2/4 z-[10000]">
                         <h2 className="text-xl font-semibold mb-4">New Plan</h2>
                         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
                             <label className="block text-textcontainerbg mb-1 font-semibold text-sm">Name</label>
