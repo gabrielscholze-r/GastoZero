@@ -69,7 +69,7 @@ export default function Sidebar({isOpen, setIsOpen, setPlan, selectedPlan}) {
     return (
         <>
             <div className="md:hidden flex items-center justify-between bg-containerbg text-textcontainerbg p-4 z-50 fixed top-0 left-0 w-full">
-                <h1 className="text-xl font-bold mb-5">GastoZero</h1>
+                <h1 className="text-2xl font-bold mb-5">SpendZero</h1>
                 <button
                     onClick={() => setIsOpen(true)}
                     className="flex flex-col justify-between w-6 h-5"
@@ -84,7 +84,7 @@ export default function Sidebar({isOpen, setIsOpen, setPlan, selectedPlan}) {
                 <div className="fixed inset-0 bg-containerbg text-textcontainerbg z-50 flex flex-col justify-between p-6 overflow-y-auto">
                     <div>
                         <div className="flex justify-between items-center mb-8 sticky top-0 bg-containerbg py-2">
-                            <h1 className="text-xl font-bold">GastoZero</h1>
+                            <h1 className="text-xl font-bold">SpendZero</h1>
                             <button
                                 onClick={() => setIsOpen(false)}
                                 className="text-2xl font-bold"
@@ -112,7 +112,7 @@ export default function Sidebar({isOpen, setIsOpen, setPlan, selectedPlan}) {
 
             <div className="hidden md:flex flex-col justify-between w-1/5 min-h-screen bg-containerbg text-textcontainerbg py-8 px-6">
                 <div className="space-y-6">
-                    <h1 className="text-2xl">GastoZero</h1>
+                    <h1 className="text-2xl">SpendZero</h1>
                     {authToken ? authenticatedLinks : guestLinks}
                 </div>
                 <div className="flex justify-between items-center">

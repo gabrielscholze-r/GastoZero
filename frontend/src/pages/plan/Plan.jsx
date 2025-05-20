@@ -13,6 +13,7 @@ import {
 } from "./Actions";
 import { useQueryClient } from "@tanstack/react-query";
 import PlanEdit from "./PlanEdit.jsx";
+import {formatDate} from "../../util/util.js";
 
 export default function Plan({ data }) {
   const navigate = useNavigate();
@@ -263,7 +264,7 @@ export default function Plan({ data }) {
                     isEditing && sel ? "bg-gray-dark opacity-60" : ""
                   }`}
                 >
-                  <td className="p-3">{expense.date}</td>
+                  <td className="p-3">{formatDate(expense.date)}</td>
                   <td className="p-3">{expense.description}</td>
                   <td className="p-3">{expense.category_name}</td>
                   <td className="p-3">
