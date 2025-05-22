@@ -15,7 +15,7 @@ import (
 
 var jwtKey []byte
 
-// Claims defines the structure of JWT claims.
+// Claims define the structure of JWT claims.
 type Claims struct {
 	Username string `json:"username"`
 	jwt.RegisteredClaims
@@ -57,7 +57,7 @@ func GenerateJWT(username string) (string, error) {
 		return "", err
 	}
 
-	log.Debug().Str("username", username).Msg("JWT generated successfully")
+	log.Debug().Msg("JWT generated successfully")
 	return signedToken, nil
 }
 
@@ -90,7 +90,7 @@ func JWTAuth(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		// Token is valid, attach email (username) to context
-		log.Debug().Str("username", claims.Username).Msg("JWT validated successfully")
+		log.Debug().Msg("JWT validated successfully")
 		ctx := context.WithValue(r.Context(), "email", claims.Username)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}

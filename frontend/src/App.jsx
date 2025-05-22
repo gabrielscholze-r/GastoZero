@@ -16,6 +16,7 @@ import HomePage from './pages/homePage/Home.jsx';
 import ProtectedRoute from './components/protectedRoutes/ProtectedRoutes.jsx';
 import Plan from './pages/plan/Plan.jsx';
 import {setUnauthorizedHandler} from './services/API.jsx';
+import Reports from "./pages/reports/Reports.jsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -76,6 +77,11 @@ function AppContent() {
                     <Route path="/plan" element={
                         <ProtectedRoute isAuthenticated={isAuthenticated}>
                             <Plan data={plan}/>
+                        </ProtectedRoute>
+                    }/>
+                    <Route path="/reports" element={
+                        <ProtectedRoute isAuthenticated={isAuthenticated}>
+                            <Reports />
                         </ProtectedRoute>
                     }/>
                 </Routes>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {NavLink, useNavigate} from 'react-router-dom';
 import {IoIosArrowForward} from 'react-icons/io';
 import {usePlans} from '../../hooks/usePlans.jsx';
@@ -44,7 +44,7 @@ export default function ProtectedSidebar({setIsOpen, setPlan, selectedPlan}) {
                 >
                     <div className="flex items-center">
                         <h1 className="text-xl">Plans</h1>
-                        <IoIosArrowForward className={`${openPlan ? 'rotate-90' : ''} transition-transform`} />
+                        <IoIosArrowForward className={`${openPlan ? 'rotate-90' : ''} transition-transform`}/>
                     </div>
                 </div>
                 <div className={`overflow-hidden transition-all duration-300 ease-in-out my-2 ${
@@ -84,7 +84,7 @@ export default function ProtectedSidebar({setIsOpen, setPlan, selectedPlan}) {
                         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
                             <label className="block text-textcontainerbg mb-1 font-semibold text-sm">Name</label>
                             <input
-                                {...register('name', { required: true })}
+                                {...register('name', {required: true})}
                                 placeholder="Plan Name"
                                 className="w-full px-4 py-2 rounded-lg bg-textcontainerbg text-primary dark:bg-bglight dark:text-primary font-medium outline-none focus:ring-2 focus:ring-gold"
                             />
@@ -98,7 +98,10 @@ export default function ProtectedSidebar({setIsOpen, setPlan, selectedPlan}) {
                             <div className="flex justify-end gap-2">
                                 <button
                                     type="button"
-                                    onClick={() => { reset(); setShowModal(false); }}
+                                    onClick={() => {
+                                        reset();
+                                        setShowModal(false);
+                                    }}
                                     className="px-4 py-2 rounded bg-gray-600 hover:bg-red-800 cursor-pointer"
                                 >
                                     Cancel

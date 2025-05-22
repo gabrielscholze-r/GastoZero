@@ -307,7 +307,7 @@ export default function Plan({ data }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ type: "tween", duration: 0.3 }}
-            className="w-11/12 h-10/12 bg-containerbg rounded p-6 text-white z-50 shadow-lg overflow-visible"
+            className="w-11/12 h-10/12 bg-containerbg rounded p-6 text-white shadow-lg overflow-visible"
           >
 
             <div className="flex justify-between mb-5">
