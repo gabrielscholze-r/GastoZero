@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/joho/godotenv"
+	"github.com/rs/zerolog/log"
 	"net/http"
 	"os"
 	"strings"
@@ -14,24 +15,31 @@ import (
 
 var jwtKey []byte
 
+// Claims defines the structure of JWT claims.
 type Claims struct {
 	Username string `json:"username"`
 	jwt.RegisteredClaims
 }
 
+// InitJWT loads the JWT secret from the environment and prepares it for signing tokens.
 func InitJWT() error {
 	err := godotenv.Load()
 	if err != nil {
+		log.Error().Err(err).Msg(".env file could not be loaded")
 		return fmt.Errorf("failed to load .env: %v", err)
 	}
 
 	jwtKey = []byte(os.Getenv("JWT_SECRET"))
 	if len(jwtKey) == 0 {
+		log.Fatal().Msg("JWT_SECRET is missing in the environment")
 		return fmt.Errorf("JWT_SECRET not found")
 	}
 
+	log.Info().Msg("JWT secret loaded successfully")
 	return nil
 }
+
+// GenerateJWT generates a signed JWT token with a 2-hour expiration.
 func GenerateJWT(username string) (string, error) {
 	expirationTime := time.Now().Add(2 * time.Hour)
 
@@ -43,18 +51,30 @@ func GenerateJWT(username string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtKey)
+	signedToken, err := token.SignedString(jwtKey)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to sign JWT")
+		return "", err
+	}
+
+	log.Debug().Str("username", username).Msg("JWT generated successfully")
+	return signedToken, nil
 }
+
+// JWTAuth is a middleware that validates JWT tokens and adds the username to the request context.
 func JWTAuth(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
-			http.Error(w, "Missing Authorization header", http.StatusUnauthorized)
+			log.Warn().Msg("Missing Authorization header")
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
+
 		parts := strings.Split(authHeader, " ")
 		if len(parts) != 2 || parts[0] != "Bearer" {
-			http.Error(w, "Invalid Authorization header", http.StatusUnauthorized)
+			log.Warn().Msg("Malformed Authorization header")
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 
@@ -64,9 +84,13 @@ func JWTAuth(next http.HandlerFunc) http.HandlerFunc {
 			return jwtKey, nil
 		})
 		if err != nil || !token.Valid {
-			http.Error(w, "Invalid token", http.StatusUnauthorized)
+			log.Warn().Err(err).Msg("Invalid or expired JWT")
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
+
+		// Token is valid, attach email (username) to context
+		log.Debug().Str("username", claims.Username).Msg("JWT validated successfully")
 		ctx := context.WithValue(r.Context(), "email", claims.Username)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}

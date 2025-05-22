@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useForm } from "react-hook-form";
-import { addExpense, addNewCategory } from "./Actions";
-import { createPortal } from "react-dom";
+import React, {useEffect, useRef, useState} from "react";
+import {useForm} from "react-hook-form";
+import {addExpense, addNewCategory} from "./Actions";
+import {createPortal} from "react-dom";
 
 export default function PlanAddEntry({
   onSave,
@@ -158,8 +158,7 @@ export default function PlanAddEntry({
             setValueAs: (v) => parseFloat(v.replace(",", ".")),
           })}
           onInput={(e) => {
-            const cleaned = e.target.value.replace(/[^\d.,]/g, "");
-            e.target.value = cleaned;
+            e.target.value = e.target.value.replace(/[^\d.,]/g, "");
           }}
           className={`p-1 w-full rounded bg-bglight border ${
             errors.amount ? "border-red-500" : "border-grayDark"

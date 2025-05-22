@@ -46,15 +46,17 @@ func (s *budgetPlanService) Update(b *model.BudgetPlan) error {
 	return s.repository.Update(b)
 }
 func (s *budgetPlanService) UpdateAmount(id int, amount float64, add bool) error {
-	i, err := s.repository.GetByID(id)
+	plan, err := s.repository.GetByID(id)
 	if err != nil {
 		return err
 	}
+
+	var newAmount float64
 	if add {
-		i.TotalAmount = i.TotalAmount + amount
+		newAmount = plan.TotalAmount + amount
 	} else {
-		i.TotalAmount = i.TotalAmount - amount
+		newAmount = plan.TotalAmount - amount
 	}
 
-	return s.repository.Update(i)
+	return s.repository.UpdateAmount(id, newAmount)
 }

@@ -14,10 +14,12 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import PlanEdit from "./PlanEdit.jsx";
 import {formatDate} from "../../util/util.js";
+import {usePlans} from "../../hooks/usePlans.jsx";
 
 export default function Plan({ data }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const {refetch} = usePlans()
 
   const [localData, setLocalData] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -78,12 +80,7 @@ export default function Plan({ data }) {
       totalAmount: prev.totalAmount + newExpense.amount,
     }));
 
-    await queryClient.invalidateQueries(["plans"]);
-    const allPlans = await queryClient.fetchQuery({ queryKey: ["plans"] });
-    const updated = allPlans.find((p) => p.id === localData.id);
-    if (updated) {
-      setLocalData(updated);
-    }
+    await refetch();
   };
 
   const handleDeleteExpense = async () => {

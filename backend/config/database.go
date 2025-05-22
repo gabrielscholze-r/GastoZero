@@ -4,10 +4,10 @@ import (
 	"backend/model"
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/rs/zerolog/log"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
 	"github.com/uptrace/bun/driver/pgdriver"
@@ -19,6 +19,7 @@ func ConnectDB() (*bun.DB, error) {
 	// Load .env
 	err := godotenv.Load()
 	if err != nil {
+		log.Error().Err(err).Msg("Erro ao carregar .env")
 		return nil, fmt.Errorf("failed to load .env: %v", err)
 	}
 
@@ -30,15 +31,21 @@ func ConnectDB() (*bun.DB, error) {
 		os.Getenv("DB_PORT"),
 		os.Getenv("DB_NAME"),
 	)
-	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
 
+	log.Info().Str("dsn", dsn).Msg("Inicializando conexão com o PostgreSQL")
+
+	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
 	db := bun.NewDB(sqldb, pgdialect.New())
+
 	db.RegisterModel((*model.BudgetPlanExpense)(nil))
+
+	// Test connection
 	if err := db.Ping(); err != nil {
+		log.Error().Err(err).Msg("Erro ao realizar ping na base de dados")
 		return nil, fmt.Errorf("failed to ping database: %v", err)
 	}
 
-	log.Println("Successfully connected to PostgreSQL with Bun!")
+	log.Info().Msg("Conectado com sucesso ao PostgreSQL via Bun")
 	DB = db
 	return db, nil
 }
