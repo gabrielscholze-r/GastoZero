@@ -3,12 +3,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePlans } from "../../hooks/usePlans.jsx";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ReportGraph from "./ReportGraph.jsx";
+
 
 export default function Reports() {
     const { data: plans = []} = usePlans();
     const [selectedPlan, setSelectedPlan] = useState("");
     const [fromDate, setFromDate] = useState("");
     const [toDate, setToDate] = useState("");
+    const [reportData, setReportData] = useState([]);
+    const [reportName, setReportName] = useState("");
+
+
 
     const handleGenerateReport = (e) => {
         e.preventDefault();
@@ -17,19 +23,44 @@ export default function Reports() {
             toast.error("You must select a plan");
             return;
         }
-        if ((!fromDate && toDate) || (fromDate && !toDate) || fromDate > toDate) {
+        if ((!fromDate && toDate) || (fromDate && !toDate) || new Date(fromDate) > new Date(toDate)) {
             toast.error("You must select a valid date range");
             return;
         }
 
         toast.success("Report generation started");
 
-        console.log({
-            plan: selectedPlan,
-            fromDate,
-            toDate,
+        const filteredPlan = plans.find(p => p.id === parseInt(selectedPlan, 10));
+        if (!filteredPlan) {
+            toast.error("Plan not found.");
+            return;
+        }
+        setReportName(filteredPlan.name);
+        const filteredExpenses = filteredPlan.expenses.filter(exp => {
+            const expenseDate = new Date(exp.date);
+            return (!fromDate || expenseDate >= new Date(fromDate)) &&
+                (!toDate || expenseDate <= new Date(toDate));
         });
+
+        const categoryAggregation = filteredExpenses.reduce((acc, exp) => {
+            const category = exp.category_name;
+            if (acc[category]) {
+                acc[category] += exp.amount;
+            } else {
+                acc[category] = exp.amount;
+            }
+            return acc;
+        }, {});
+
+        const reportData = Object.entries(categoryAggregation).map(([name, value]) => ({
+            name,
+            value
+        }));
+
+        console.log(reportData);
+        setReportData(reportData);
     };
+
 
     return (
         <div className="h-screen w-full flex items-center justify-center">
@@ -45,7 +76,6 @@ export default function Reports() {
                         onSubmit={handleGenerateReport}
                         className="flex justify-evenly items-center gap-6 w-full"
                     >
-                        {/* Plan/Category Selection */}
                         <div className="flex flex-col w-1/5">
                             <label htmlFor="plan-select" className="mb-1 font-semibold text-sm">
                                 Select a Plan:
@@ -65,7 +95,6 @@ export default function Reports() {
                             </select>
                         </div>
 
-                        {/* From Date */}
                         <div className="flex flex-col w-1/5">
                             <label htmlFor="from-date" className="mb-1 font-semibold text-sm">
                                 From Date:
@@ -79,7 +108,6 @@ export default function Reports() {
                             />
                         </div>
 
-                        {/* To Date */}
                         <div className="flex flex-col w-1/5">
                             <label htmlFor="to-date" className="mb-1 font-semibold text-sm">
                                 To Date:
@@ -93,7 +121,6 @@ export default function Reports() {
                             />
                         </div>
 
-                        {/* Generate Report Button */}
                         <div className="flex flex-col w-1/5 mt-auto">
                             <button
                                 type="submit"
@@ -103,6 +130,9 @@ export default function Reports() {
                             </button>
                         </div>
                     </form>
+                    <div>
+                        {reportData && (<ReportGraph name={reportName} data={reportData}/>)}
+                    </div>
                 </motion.div>
             </AnimatePresence>
         </div>

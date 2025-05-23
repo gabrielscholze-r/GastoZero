@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {useForm} from "react-hook-form";
 import {addExpense, addNewCategory} from "./Actions";
 import {createPortal} from "react-dom";
-
+import {toast} from "react-toastify";
 export default function PlanAddEntry({
   onSave,
   onCancel,
@@ -59,6 +59,7 @@ export default function PlanAddEntry({
     onSave(result);
     reset();
     setCategoryInput("");
+    toast.success("Entry added successfully");
     setIsAdding(false);
   };
 
@@ -148,7 +149,7 @@ export default function PlanAddEntry({
         <input
           type="text"
           inputMode="decimal"
-          placeholder="R$ 0,00"
+          placeholder="$ 0,00"
           {...register("amount", {
             required: "Amount is required",
             pattern: {
