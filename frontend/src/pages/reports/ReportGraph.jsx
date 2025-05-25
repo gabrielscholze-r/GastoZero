@@ -67,7 +67,7 @@ export default function ReportGraph({ name, data, type }) {
                                 backgroundColor: '#ffffff',
                                 border: '1px solid #555555',
                                 borderRadius: '4px',
-                                color: '#ffffff'
+                                color: '#000000'
                             }}
                         />
                         <Legend
@@ -97,7 +97,7 @@ export default function ReportGraph({ name, data, type }) {
                                 backgroundColor: '#ffffff',
                                 border: '1px solid #555555',
                                 borderRadius: '4px',
-                                color: '#ffffff'
+                                color: '#000000'
                             }}
                         />
                         <Legend
@@ -133,7 +133,7 @@ export default function ReportGraph({ name, data, type }) {
                                 backgroundColor: '#ffffff',
                                 border: '1px solid #555555',
                                 borderRadius: '4px',
-                                color: '#ffffff'
+                                color: '#000000'
                             }}
                         />
                         <Legend
@@ -173,10 +173,10 @@ export default function ReportGraph({ name, data, type }) {
                         <Tooltip
                             formatter={(value) => [`$${value.toFixed(2)}`, 'Amount']}
                             contentStyle={{
-                                backgroundColor: '#333333',
+                                backgroundColor: '#ffffff',
                                 border: '1px solid #555555',
                                 borderRadius: '4px',
-                                color: '#ffffff'
+                                color: '#000000'
                             }}
                         />
                         <Legend
@@ -192,13 +192,32 @@ export default function ReportGraph({ name, data, type }) {
                     </AreaChart>
                 );
             case "treemap":
+                { const CustomTooltip = ({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                        const { name, value } = payload[0].payload;
+                        return (
+                            <div style={{
+                                backgroundColor: '#ffffff',
+                                border: '1px solid #555555',
+                                borderRadius: '4px',
+                                padding: '8px',
+                                color: '#000000'
+                            }}>
+                                <p><strong>{name}</strong></p>
+                                <p>Amount: ${value.toFixed(2)}</p>
+                            </div>
+                        );
+                    }
+                    return null;
+                };
+
                 return (
                     <Treemap
                         data={data}
                         dataKey="value"
                         ratio={4 / 3}
                         stroke="#ffffff"
-                        content={({ x, y, width, height, name, value }) => (
+                        content={({ x, y, width, height, name }) => (
                             <g>
                                 <rect
                                     x={x}
@@ -216,12 +235,15 @@ export default function ReportGraph({ name, data, type }) {
                                     fontSize={14}
                                     fontWeight="bold"
                                 >
-                                    {`${name}`}
+                                    {name}
                                 </text>
                             </g>
                         )}
-                    />
-                );
+                    >
+                        <Tooltip content={<CustomTooltip />} />
+                    </Treemap>
+                ); }
+
             default:
                 return <div className="text-center text-gray-400">Unknown chart type</div>;
         }
