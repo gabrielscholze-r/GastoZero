@@ -3,14 +3,14 @@ import {useForm} from "react-hook-form";
 import {addExpense, addNewCategory} from "./Actions";
 import {createPortal} from "react-dom";
 import {toast} from "react-toastify";
+
 export default function PlanAddEntry({
-  onSave,
-  onCancel,
-  budgetId,
-  categories,
-  setCategories,
-  setIsAdding,
-}) {
+                                       onSave,
+                                       budgetId,
+                                       categories,
+                                       setCategories,
+                                       setIsAdding,
+                                     }) {
   const {
     register,
     handleSubmit,
@@ -28,7 +28,7 @@ export default function PlanAddEntry({
 
   useEffect(() => {
     const filtered = categories.filter((cat) =>
-      cat.name.toLowerCase().includes(categoryInput.toLowerCase())
+        cat.name.toLowerCase().includes(categoryInput.toLowerCase())
     );
     setFilteredCategories(filtered);
   }, [categoryInput, categories]);
@@ -68,136 +68,123 @@ export default function PlanAddEntry({
   }
 
   return (
-    <tr className="bg-zinc-800 relative z-50">
-      <td className="p-2 w-[15%]">
-        <input
-          type="date"
-          {...register("date", { required: "Date is required" })}
-          className={`p-1 w-full rounded bg-bglight border ${
-            errors.date ? "border-red-500" : "border-grayDark"
-          } text-text`}
-          form="plan-entry-form"
-        />
-        {errors.date && (
-          <span className="text-red-500 text-xs">{errors.date.message}</span>
-        )}
-      </td>
+      <tr className="bg-bgdark relative z-50">
+        <td className="p-2 w-[15%]">
+          <input
+              type="date"
+              {...register("date", { required: "Date is required" })}
+              className={`p-1 w-full rounded bg-bglight border ${
+                  errors.date ? "border-red-500" : "border-grayDark"
+              } text-text`}
+              form="plan-entry-form"
+          />
+          {errors.date && (
+              <span className="text-red-500 text-xs">{errors.date.message}</span>
+          )}
+        </td>
 
-      <td className="p-2 w-[30%]">
-        <input
-          type="text"
-          placeholder="Description"
-          {...register("description", { required: "Description is required" })}
-          className={`p-1 w-full rounded bg-bglight border ${
-            errors.description ? "border-red-500" : "border-grayDark"
-          } text-text`}
-          form="plan-entry-form"
-        />
-        {errors.description && (
-          <span className="text-red-500 text-xs">
+        <td className="p-2 w-[30%]">
+          <input
+              type="text"
+              placeholder="Description"
+              {...register("description", { required: "Description is required" })}
+              className={`p-1 w-full rounded bg-bglight border ${
+                  errors.description ? "border-red-500" : "border-grayDark"
+              } text-text`}
+              form="plan-entry-form"
+          />
+          {errors.description && (
+              <span className="text-red-500 text-xs">
             {errors.description.message}
           </span>
-        )}
-      </td>
-      <td className="p-2 w-[20%] relative">
-        <input
-          ref={inputRef}
-          type="text"
-          placeholder="Category"
-          value={categoryInput}
-          onChange={(e) => {
-            const value = e.target.value;
-            setCategoryInput(value);
-            setValue("category_input", value);
-            setShowDropdown(true);
-          }}
-          onFocus={() => setShowDropdown(true)}
-          onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
-          className="p-1 w-full rounded bg-bglight border border-grayDark text-text"
-          form="plan-entry-form"
-        />
-        {showDropdown && filteredCategories.length > 0 && (
-          <DropdownPortal>
-            <ul
-              className="absolute z-50 bg-bgdark border border-gold rounded shadow-lg max-h-40 overflow-y-auto"
-              style={{
-                position: "absolute",
-                top: `${dropdownPos.top}px`,
-                left: `${dropdownPos.left}px`,
-                width: `${dropdownPos.width}px`,
+          )}
+        </td>
+
+        <td className="p-2 w-[20%] relative">
+          <input
+              ref={inputRef}
+              type="text"
+              placeholder="Category"
+              value={categoryInput}
+              onChange={(e) => {
+                const value = e.target.value;
+                setCategoryInput(value);
+                setValue("category_input", value);
+                setShowDropdown(true);
               }}
-            >
-              {filteredCategories.map((cat) => (
-                <li
-                  key={cat.id}
-                  className="p-2 opacity-80 hover:opacity-100 cursor-pointer text-text"
-                  onMouseDown={() => {
-                    setCategoryInput(cat.name);
-                    setValue("category_input", cat.name);
-                    setShowDropdown(false);
-                  }}
+              onFocus={() => setShowDropdown(true)}
+              onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+              className="p-1 w-full rounded bg-bglight border border-grayDark text-text"
+              form="plan-entry-form"
+          />
+          {showDropdown && filteredCategories.length > 0 && (
+              <DropdownPortal>
+                <ul
+                    className="absolute z-50 bg-bgdark border border-gold rounded shadow-lg max-h-40 overflow-y-auto"
+                    style={{
+                      position: "absolute",
+                      top: `${dropdownPos.top}px`,
+                      left: `${dropdownPos.left}px`,
+                      width: `${dropdownPos.width}px`,
+                    }}
                 >
-                  {cat.name}
-                </li>
-              ))}
-            </ul>
-          </DropdownPortal>
-        )}
-      </td>
+                  {filteredCategories.map((cat) => (
+                      <li
+                          key={cat.id}
+                          className="p-2 opacity-80 hover:opacity-100 cursor-pointer text-text"
+                          onMouseDown={() => {
+                            setCategoryInput(cat.name);
+                            setValue("category_input", cat.name);
+                            setShowDropdown(false);
+                          }}
+                      >
+                        {cat.name}
+                      </li>
+                  ))}
+                </ul>
+              </DropdownPortal>
+          )}
+        </td>
 
-      <td className="p-2 w-[15%]">
-        <input
-          type="text"
-          inputMode="decimal"
-          placeholder="$ 0,00"
-          {...register("amount", {
-            required: "Amount is required",
-            pattern: {
-              value: /^\d+([.,]\d{0,2})?$/,
-              message: "Digite um número válido, ex: 10, 25.50 ou 1,99",
-            },
-            setValueAs: (v) => parseFloat(v.replace(",", ".")),
-          })}
-          onInput={(e) => {
-            e.target.value = e.target.value.replace(/[^\d.,]/g, "");
-          }}
-          className={`p-1 w-full rounded bg-bglight border ${
-            errors.amount ? "border-red-500" : "border-grayDark"
-          } text-text`}
-          form="plan-entry-form"
-        />
-
-        {errors.amount && (
-          <span className="text-red-500 text-xs">{errors.amount.message}</span>
-        )}
-      </td>
-
-      <td className="p-2 w-[20%]">
-        <select
-          {...register("is_recurring", {
-            required: "Recurring option is required",
-          })}
-          className={`p-1 w-full rounded bg-bglight border ${
-            errors.is_recurring ? "border-red-500" : "border-grayDark"
-          } text-text`}
-          form="plan-entry-form"
-        >
-          <option value="">Select...</option>
-          <option value="no">No</option>
-          <option value="yes">Yes</option>
-        </select>
-        {errors.is_recurring && (
-          <span className="text-red-500 text-xs">
-            {errors.is_recurring.message}
-          </span>
-        )}
-      </td>
-
-      <td className="hidden">
-        <form id="plan-entry-form" onSubmit={handleSubmit(onSubmit)}>
-          <input type="hidden" {...register("category_input")} />
-        </form>
-      </td>
-    </tr>
+        <td className="p-2 w-[15%]">
+          <input
+              type="text"
+              inputMode="decimal"
+              placeholder="$ 0,00"
+              {...register("amount", {
+                required: "Amount is required",
+                pattern: {
+                  value: /^\d+([.,]\d{0,2})?$/,
+                  message: "Digite um número válido, ex: 10, 25.50 ou 1,99",
+                },
+                setValueAs: (v) => parseFloat(v.replace(",", ".")),
+              })}
+              onInput={(e) => {
+                e.target.value = e.target.value.replace(/[^\d.,]/g, "");
+              }}
+              className={`p-1 w-full rounded bg-bglight border ${
+                  errors.amount ? "border-red-500" : "border-grayDark"
+              } text-text`}
+              form="plan-entry-form"
+          />
+          {errors.amount && (
+              <span className="text-red-500 text-xs">{errors.amount.message}</span>
+          )}
+        </td>
+        <td className="p-2 w-[20%] text-center">
+          <input
+              type="checkbox"
+              {...register("is_recurring")}
+              className="w-4 h-4"
+              form="plan-entry-form"
+          />
+        </td>
+        <td className="p-2 w-[10%] bg-bgdark"></td>
+        <td className="hidden">
+          <form id="plan-entry-form" onSubmit={handleSubmit(onSubmit)}>
+            <input type="hidden" {...register("category_input")} />
+          </form>
+        </td>
+      </tr>
   );
 }

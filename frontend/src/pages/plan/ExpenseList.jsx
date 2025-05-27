@@ -42,11 +42,14 @@ export default function ExpenseList ({
     }, [propsSortedExpenses]);
 
     const handleEditClick = (expense) => {
+        if (isAdding || isEditing) {
+            toast.info("Finish current operation before editing");
+            return;
+        }
         if (editingExpense && editingExpense !== expense.id) {
             toast.info("Please finish editing the current expense first");
             return;
         }
-
         setEditingExpense(expense.id);
         setEditForm({
             date: expense.date,
@@ -299,8 +302,11 @@ export default function ExpenseList ({
                                     ) : (
                                         <button
                                             onClick={() => handleEditClick(expense)}
-                                            className="p-1 bg-blue-600 rounded hover:opacity-80 transition-opacity cursor-pointer"
-                                            disabled={!!editingExpense} // Desabilita se já estiver editando
+                                            className={`p-1 rounded hover:opacity-80 transition-opacity ${
+                                                editingExpense || isAdding || isEditing
+                                                    ? "bg-gray-600 cursor-not-allowed hover:opacity-100"
+                                                    : "bg-blue-600 cursor-pointer"
+                                            }`}                                            disabled={!!editingExpense || isAdding || isEditing}
                                         >
                                             <MdEdit size={16} />
                                         </button>
