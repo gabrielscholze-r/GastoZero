@@ -131,3 +131,24 @@ export const updatePlan = async (planObject) => {
     throw new Error(error.message);
   }
 }
+
+export const updateExpense = async (id, expenseObject) => {
+  try {
+    const r = await API.put(`${BASE_URL}/expense`, {
+      id: id,
+      amount: Number(expenseObject.amount),
+      description: expenseObject.description,
+      category_id: expenseObject.category_id,
+      category_name: expenseObject.category_name,
+      date: expenseObject.date,
+      is_recurring: expenseObject.is_recurring,
+    })
+    if (r.status === 200) {
+      return true;
+    } else {
+      throw new Error("Error updating expense");
+    }
+  } catch (e) {
+    throw new Error(e.message);
+  }
+}

@@ -193,7 +193,6 @@ export default function PlanAddEntry({
         )}
       </td>
 
-      {/* Form escondido para submit */}
       <td className="hidden">
         <form id="plan-entry-form" onSubmit={handleSubmit(onSubmit)}>
           <input type="hidden" {...register("category_input")} />

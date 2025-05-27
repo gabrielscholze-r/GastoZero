@@ -12,6 +12,7 @@ const graphTypes = [
     { label: "Line", value: "line" },
     { label: "Area", value: "area" },
     { label: "Treemap", value: "treemap" },
+    { label: "Radar", value: "radar" },
 ];
 
 export default function Reports() {

@@ -1,9 +1,9 @@
 import {
     PieChart, Pie, BarChart, Bar, LineChart, Line, AreaChart, Area,
     Treemap, ResponsiveContainer, Tooltip, Cell,
-    XAxis, YAxis, CartesianGrid, Legend
+    XAxis, YAxis, CartesianGrid, Legend, Radar, PolarRadiusAxis, PolarGrid, RadarChart, PolarAngleAxis
 } from "recharts";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 
 const COLORS = [
     '#4E79A7', '#F28E2B', '#E15759', '#76B7B2',
@@ -12,11 +12,10 @@ const COLORS = [
     '#7570B3', '#E7298A', '#66A61E', '#E6AB02'
 ];
 
-const textColor = '#ffffff'; // Changed to white
-const axisColor = '#ffffff'; // Changed to white
-const gridColor = '#444444'; // Darker grid for better contrast with white text
+const axisColor = '#ffffff';
+const gridColor = '#444444';
 
-export default function ReportGraph({ name, data, type }) {
+export default function ReportGraph({name, data, type}) {
     const [total, setTotal] = useState(0);
 
     useEffect(() => {
@@ -28,7 +27,7 @@ export default function ReportGraph({ name, data, type }) {
         return <div className="text-center text-gray-500 mt-8">No data available to display.</div>;
     }
 
-    const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+    const renderCustomizedLabel = ({cx, cy, midAngle, innerRadius, outerRadius, percent, index}) => {
         const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
         const x = cx + radius * Math.cos(-midAngle * Math.PI / 180);
         const y = cy + radius * Math.sin(-midAngle * Math.PI / 180);
@@ -50,7 +49,7 @@ export default function ReportGraph({ name, data, type }) {
                             data={data}
                             innerRadius="35%"
                             outerRadius="80%"
-                            label={renderCustomizedLabel} // Using the custom label function
+                            label={renderCustomizedLabel}
                             labelLine={false}
                         >
                             {data.map((_, index) => (
@@ -71,7 +70,7 @@ export default function ReportGraph({ name, data, type }) {
                             }}
                         />
                         <Legend
-                            wrapperStyle={{ color: '#ffffff' }}
+                            wrapperStyle={{color: '#ffffff'}}
                             layout="vertical"
                             verticalAlign="middle"
                             align="right"
@@ -81,14 +80,14 @@ export default function ReportGraph({ name, data, type }) {
             case "bar":
                 return (
                     <BarChart data={data}>
-                        <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                        <CartesianGrid strokeDasharray="3 3" stroke={gridColor}/>
                         <XAxis
                             dataKey="name"
-                            tick={{ fill: axisColor }}
+                            tick={{fill: axisColor}}
                             tickMargin={10}
                         />
                         <YAxis
-                            tick={{ fill: axisColor }}
+                            tick={{fill: axisColor}}
                             tickFormatter={(value) => `$${value}`}
                         />
                         <Tooltip
@@ -101,7 +100,7 @@ export default function ReportGraph({ name, data, type }) {
                             }}
                         />
                         <Legend
-                            wrapperStyle={{ color: '#ffffff' }}
+                            wrapperStyle={{color: '#ffffff'}}
                         />
                         <Bar dataKey="value">
                             {data.map((_, index) => (
@@ -117,14 +116,14 @@ export default function ReportGraph({ name, data, type }) {
             case "line":
                 return (
                     <LineChart data={data}>
-                        <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                        <CartesianGrid strokeDasharray="3 3" stroke={gridColor}/>
                         <XAxis
                             dataKey="name"
-                            tick={{ fill: axisColor }}
+                            tick={{fill: axisColor}}
                             tickMargin={10}
                         />
                         <YAxis
-                            tick={{ fill: axisColor }}
+                            tick={{fill: axisColor}}
                             tickFormatter={(value) => `$${value}`}
                         />
                         <Tooltip
@@ -137,15 +136,15 @@ export default function ReportGraph({ name, data, type }) {
                             }}
                         />
                         <Legend
-                            wrapperStyle={{ color: '#ffffff' }}
+                            wrapperStyle={{color: '#ffffff'}}
                         />
                         <Line
                             type="monotone"
                             dataKey="value"
                             stroke={COLORS[0]}
                             strokeWidth={2}
-                            dot={{ fill: COLORS[0], strokeWidth: 1, r: 4 }}
-                            activeDot={{ r: 6, stroke: COLORS[0], strokeWidth: 2 }}
+                            dot={{fill: COLORS[0], strokeWidth: 1, r: 4}}
+                            activeDot={{r: 6, stroke: COLORS[0], strokeWidth: 2}}
                         />
                     </LineChart>
                 );
@@ -154,20 +153,21 @@ export default function ReportGraph({ name, data, type }) {
                     <AreaChart data={data}>
                         <defs>
                             {data.map((_, index) => (
-                                <linearGradient key={`gradient-${index}`} id={`color-${index}`} x1="0" y1="0" x2="0" y2="1">
+                                <linearGradient key={`gradient-${index}`} id={`color-${index}`} x1="0" y1="0" x2="0"
+                                                y2="1">
                                     <stop offset="5%" stopColor={COLORS[index]} stopOpacity={0.8}/>
                                     <stop offset="95%" stopColor={COLORS[index]} stopOpacity={0}/>
                                 </linearGradient>
                             ))}
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                        <CartesianGrid strokeDasharray="3 3" stroke={gridColor}/>
                         <XAxis
                             dataKey="name"
-                            tick={{ fill: axisColor }}
+                            tick={{fill: axisColor}}
                             tickMargin={10}
                         />
                         <YAxis
-                            tick={{ fill: axisColor }}
+                            tick={{fill: axisColor}}
                             tickFormatter={(value) => `$${value}`}
                         />
                         <Tooltip
@@ -180,7 +180,7 @@ export default function ReportGraph({ name, data, type }) {
                             }}
                         />
                         <Legend
-                            wrapperStyle={{ color: '#ffffff' }}
+                            wrapperStyle={{color: '#ffffff'}}
                         />
                         <Area
                             type="monotone"
@@ -191,10 +191,10 @@ export default function ReportGraph({ name, data, type }) {
                         />
                     </AreaChart>
                 );
-            case "treemap":
-                { const CustomTooltip = ({ active, payload }) => {
+            case "treemap": {
+                const CustomTooltip = ({active, payload}) => {
                     if (active && payload && payload.length) {
-                        const { name, value } = payload[0].payload;
+                        const {name, value} = payload[0].payload;
                         return (
                             <div style={{
                                 backgroundColor: '#ffffff',
@@ -217,7 +217,7 @@ export default function ReportGraph({ name, data, type }) {
                         dataKey="value"
                         ratio={4 / 3}
                         stroke="#ffffff"
-                        content={({ x, y, width, height, name }) => (
+                        content={({x, y, width, height, name}) => (
                             <g>
                                 <rect
                                     x={x}
@@ -240,10 +240,30 @@ export default function ReportGraph({ name, data, type }) {
                             </g>
                         )}
                     >
-                        <Tooltip content={<CustomTooltip />} />
+                        <Tooltip content={<CustomTooltip/>}/>
                     </Treemap>
-                ); }
-
+                );
+            }
+            case "radar":
+                return (
+                    <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
+                        <PolarGrid/>
+                        <PolarAngleAxis
+                            dataKey="name"
+                            tick={{fill: 'white', fontWeight: 800}}
+                        />
+                        <Radar dataKey="value" stroke={COLORS[0]} fill={COLORS[0]} fillOpacity={0.8}/>
+                        <Tooltip
+                            formatter={(value) => [`$${value.toFixed(2)}`, 'Amount']}
+                            contentStyle={{
+                                backgroundColor: '#ffffff',
+                                border: '1px solid #555555',
+                                borderRadius: '4px',
+                                color: 'black'
+                            }}
+                        />
+                    </RadarChart>
+                )
             default:
                 return <div className="text-center text-gray-400">Unknown chart type</div>;
         }

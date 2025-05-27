@@ -8,6 +8,8 @@ export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+    const [fields, setFields] = useState(false)
+
 
     useEffect(() => {
         const token = Cookies.get("authToken");
@@ -17,6 +19,10 @@ export default function LoginPage() {
     }, []);
 
     const handleSubmit = async () => {
+        if (!email || !password) {
+            setFields(true);
+            return;
+        }
         try {
             const token = await login(email, password);
             Cookies.set('authToken', token);
@@ -24,7 +30,7 @@ export default function LoginPage() {
             navigate('/home');
         } catch (e) {
             console.log(e)
-            toast.error(`${e.message}`);
+            toast.error("Error logging in: " + e.message.replace("Error: ", ""));
         }
     };
 
@@ -55,7 +61,11 @@ export default function LoginPage() {
                         className="w-full px-4 py-2 rounded-lg bg-textcontainerbg text-primary dark:bg-bglight dark:text-primary font-medium outline-none focus:ring-2 focus:ring-gold"
                     />
                 </div>
-
+                {fields && (
+                    <h1 className="text-red-500 text-center">
+                        Password and Email are required
+                    </h1>
+                )}
                 <button
                     onClick={handleSubmit}
                     className="w-full py-3 bg-bgdark transition-all text-text font-bold text-lg rounded-lg cursor-pointer hover:opacity-80"

@@ -11,6 +11,8 @@ import {
     deleteExpense,
     updatePlanAmout,
 } from "./Actions";
+import ExpenseList from './ExpenseList';
+
 import {useQueryClient} from "@tanstack/react-query";
 import PlanEdit from "./PlanEdit.jsx";
 import {formatDate} from "../../util/util.js";
@@ -145,158 +147,6 @@ export default function Plan({data}) {
 
     if (!data || Object.keys(data).length === 0) return null;
 
-    const ExpenseList = () => (
-        <div className="flex flex-col gap-4">
-            <div className="flex gap-4 items-center">
-                {!isAdding && !isEditing && (
-                    <>
-                        <button
-                            onClick={() => setIsAdding(true)}
-                            className="bg-bgdark hover:opacity-80 transition-opacity text-white px-4 py-2 rounded-md shadow cursor-pointer border-2 border-gold"
-                            disabled={isLoading}
-                        >
-                            {isLoading ? "Loading..." : "+ Add Entry"}
-                        </button>
-                        <button
-                            onClick={() => setIsEditing(true)}
-                            className="bg-bgdark hover:opacity-80 transition-opacity text-white px-4 py-2 rounded-md shadow cursor-pointer border-2 border-gold"
-                        >
-                            Edit
-                        </button>
-                    </>
-                )}
-                {isAdding && (
-                    <div className="flex gap-4">
-                        <button
-                            onClick={() =>
-                                document.getElementById("plan-entry-form")?.requestSubmit()
-                            }
-                            className="bg-bgdark hover:opacity-80 transition-opacity text-white px-4 py-2 rounded-md shadow border-2 border-gold"
-                        >
-                            Save
-                        </button>
-                        <button
-                            onClick={() => setIsAdding(false)}
-                            className="bg-bgdark hover:opacity-80 transition-opacity text-white px-4 py-2 rounded-md hover:underline border-2 border-gold cursor-pointer"
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                )}
-                {isEditing && (
-                    <div className="flex gap-4">
-                        <button
-                            onClick={handleDeleteExpense}
-                            className="bg-bgdark hover:opacity-80 transition-opacity text-white px-4 py-2 rounded-md shadow border-2 border-gold"
-                        >
-                            Save
-                        </button>
-                        <button
-                            onClick={() => {
-                                setIsEditing(false);
-                                setTempList([]);
-                            }}
-                            className="bg-bgdark hover:opacity-80 transition-opacity text-white px-4 py-2 rounded-md border-2 border-gold cursor-pointer"
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                )}
-                {error && <span className="text-red-500 text-sm">{error}</span>}
-            </div>
-            <div className="flex-1 min-h-0 overflow-x-auto overflow-y-auto rounded">
-                <table className="w-full table-auto border-collapse text-sm">
-                    <thead>
-                    <tr className="bg-primary text-white cursor-pointer ">
-                        {[
-                            {key: "date", label: "Date"},
-                            {key: "description", label: "Description"},
-                            {key: "category_name", label: "Category"},
-                            {key: "amount", label: "Amount"},
-                            {key: "is_recurring", label: "Recurring"},
-                            isEditing
-                                ? {key: "delete", label: "Delete"}
-                                : {key: "", label: ""},
-                        ].map(
-                            ({key, label}) =>
-                                key &&
-                                label && (
-                                    <th
-                                        key={key}
-                                        className={`py-2 text-center opacity-50 ${
-                                            activeColumn === key ? "opacity-100" : ""
-                                        } ${isAdding ? "opacity-90 cursor-not-allowed" : ""}`}
-                                        onClick={() => {
-                                            if (!isAdding && !isEditing) handleHeaderClick(key);
-                                        }}
-                                    >
-                                        {label}
-                                        {activeColumn === key && (
-                                            <span className="ml-1">
-                          {sortDirection === "asc" ? "▲" : "▼"}
-                        </span>
-                                        )}
-                                    </th>
-                                )
-                        )}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {isAdding && (
-                        <PlanAddEntry
-                            onSave={handleAddExpense}
-                            onCancel={() => setIsAdding(false)}
-                            categories={categories}
-                            setIsAdding={setIsAdding}
-                            budgetId={localData.id}
-                            setCategories={setCategories}
-                        />
-                    )}
-                    {sortedExpenses.map((expense) => {
-                        const idf = `${expense.id}:${expense.budget_id}:${expense.amount}`;
-                        const sel = tempList.includes(idf);
-                        return (
-                            <tr
-                                key={expense.id}
-                                className={`bg-bgdark text-white text-center transition-colors duration-200 border-b-2 border-t-2 border-gold rounded-xl ${
-                                    isEditing && sel ? "bg-gray-dark opacity-60" : ""
-                                }`}
-                            >
-                                <td className="p-3">{formatDate(expense.date)}</td>
-                                <td className="p-3">{expense.description}</td>
-                                <td className="p-3">{expense.category_name}</td>
-                                <td className="p-3">
-                                    $ {Number(expense.amount).toFixed(2)}
-                                </td>
-                                <td className="p-3">{expense.is_recurring ? "Yes" : "No"}</td>
-                                {isEditing && (
-                                    <td
-                                        className="p-2"
-                                        onClick={() =>
-                                            handleTempList(
-                                                expense.id,
-                                                expense.budget_id,
-                                                expense.amount
-                                            )
-                                        }
-                                    >
-                                        <div
-                                            className={`flex items-center justify-center p-2 rounded cursor-pointer transition-transform hover:scale-105 ${
-                                                sel ? "bg-gray-500" : "bg-red-500"
-                                            }`}
-                                        >
-                                            <MdDelete size={16} color="#ffffff"/>
-                                        </div>
-                                    </td>
-                                )}
-                            </tr>
-                        );
-                    })}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    );
 
     return (
         <div className="h-screen w-full flex items-center justify-center">
@@ -345,7 +195,27 @@ export default function Plan({data}) {
                             <PlanEdit setIsOpened={setIsEditingPlan} isOpened={isEditingPlan} data={localData}
                                       setLocalData={setLocalData}/>
                         )}
-                        <ExpenseList/>
+                        <ExpenseList
+                            isAdding={isAdding}
+                            isEditing={isEditing}
+                            isLoading={isLoading}
+                            setIsAdding={setIsAdding}
+                            setIsEditing={setIsEditing}
+                            error={error}
+                            activeColumn={activeColumn}
+                            sortDirection={sortDirection}
+                            categories={categories}
+                            localData={localData}
+                            setCategories={setCategories}
+                            handleAddExpense={handleAddExpense}
+                            handleDeleteExpense={handleDeleteExpense}
+                            handleHeaderClick={handleHeaderClick}
+                            handleTempList={handleTempList}
+                            sortedExpenses={sortedExpenses}
+                            tempList={tempList}
+                            setTempList={setTempList}
+                        />
+
                     </motion.div>
                 )}
             </AnimatePresence>

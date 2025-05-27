@@ -51,7 +51,7 @@ func (r *expensesRepository) Create(expense *model.Expense) error {
 func (r *expensesRepository) Update(expense *model.Expense) error {
 	log.Info().Int("id", expense.ID).Msg("Updating expense")
 	ctx := context.Background()
-	_, err := r.db.NewUpdate().Model(expense).Where("id = ?", expense.ID).Exec(ctx)
+	_, err := r.db.NewUpdate().Model(expense).Column("amount", "description", "category_name", "date", "is_recurring").Where("id = ?", expense.ID).Exec(ctx)
 	if err != nil {
 		log.Error().Err(err).Int("id", expense.ID).Msg("Failed to update expense")
 	} else {
