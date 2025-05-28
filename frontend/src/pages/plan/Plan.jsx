@@ -3,8 +3,6 @@ import {useNavigate} from "react-router-dom";
 import {motion, AnimatePresence} from "framer-motion";
 import {FaGear} from "react-icons/fa6";
 import {FaInfoCircle} from "react-icons/fa";
-import {MdDelete} from "react-icons/md";
-import PlanAddEntry from "./PlanAddEntry";
 import {
     getCategories,
     getExpensesByPlan,
@@ -15,13 +13,11 @@ import ExpenseList from './ExpenseList';
 
 import {useQueryClient} from "@tanstack/react-query";
 import PlanEdit from "./PlanEdit.jsx";
-import {formatDate} from "../../util/util.js";
 import {usePlans} from "../../hooks/usePlans.jsx";
 import {toast} from "react-toastify";
 
 export default function Plan({data}) {
     const navigate = useNavigate();
-    const queryClient = useQueryClient();
     const {refetch} = usePlans()
 
     const [localData, setLocalData] = useState(null);
@@ -107,12 +103,7 @@ export default function Plan({data}) {
             setTempList([]);
             setIsEditing(false);
 
-            await queryClient.invalidateQueries(["plans"]);
-            const allPlans = await queryClient.fetchQuery({queryKey: ["plans"]});
-            const updated = allPlans.find((p) => p.id === localData.id);
-            if (updated) {
-                setLocalData(updated);
-            }
+            await refetch()
         } catch (err) {
             setError(err.message);
         }

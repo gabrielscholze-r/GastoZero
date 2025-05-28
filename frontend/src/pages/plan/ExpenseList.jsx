@@ -172,7 +172,7 @@ export default function ExpenseList ({
                                 label && (
                                     <th
                                         key={key}
-                                        className={`py-2 text-center opacity-50 ${
+                                        className={`py-2 text-center opacity-70 ${
                                             activeColumn === key ? "opacity-100" : ""
                                         } ${isAdding ? "opacity-90 cursor-not-allowed" : ""}`}
                                         onClick={() => {
