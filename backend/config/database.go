@@ -2,9 +2,11 @@ package config
 
 import (
 	"backend/model"
+	"context"
 	"database/sql"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/rs/zerolog/log"
 	"github.com/uptrace/bun"
@@ -15,29 +17,63 @@ import (
 var DB *bun.DB
 
 func ConnectDB() (*bun.DB, error) {
+	// Load environment variables
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbName := os.Getenv("DB_NAME")
+
+	if dbUser == "" || dbPassword == "" || dbHost == "" || dbPort == "" || dbName == "" {
+		return nil, fmt.Errorf("missing required environment variables")
+	}
+
 	dsn := fmt.Sprintf(
 		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_NAME"),
+		dbUser,
+		dbPassword,
+		dbHost,
+		dbPort,
+		dbName,
 	)
 
-	log.Info().Str("dsn", dsn).Msg("Initializing DB connection")
+	log.Info().Str("dsn", dsn).Msg("Initializing PostgreSQL connection")
 
 	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
 	db := bun.NewDB(sqldb, pgdialect.New())
 
-	db.RegisterModel((*model.BudgetPlanExpense)(nil))
+	DB = db
+	db.RegisterModel((*model.BudgetPlanExpense)(nil)) // Register your model
 
-	// Test connection
 	if err := db.Ping(); err != nil {
-		log.Error().Err(err).Msg("ERROR: Failed to ping database")
+		log.Error().Err(err).Msg("Failed to ping database")
 		return nil, fmt.Errorf("failed to ping database: %v", err)
 	}
 
-	log.Info().Msg("Connected to Database")
-	DB = db
+	log.Info().Msg("Successfully connected to PostgreSQL using Bun")
+
+	// Run SQL script to create tables
+	if err := runSchemaScript(db); err != nil {
+		log.Error().Err(err).Msg("Failed to run schema SQL script")
+		return nil, err
+	}
+
 	return db, nil
+}
+
+func runSchemaScript(db *bun.DB) error {
+	sqlPath := filepath.Join("config", "tables.sql")
+
+	content, err := os.ReadFile(sqlPath)
+	if err != nil {
+		return fmt.Errorf("failed to read SQL file: %v", err)
+	}
+
+	_, err = db.ExecContext(context.Background(), string(content))
+	if err != nil {
+		return fmt.Errorf("failed to execute SQL script: %v", err)
+	}
+
+	log.Info().Str("file", sqlPath).Msg("Schema SQL script executed successfully")
+	return nil
 }
