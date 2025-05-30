@@ -8,4 +8,9 @@ export default defineConfig({
       tailwindcss()
 
   ],
+    server: {
+        proxy: {
+            '/': 'http://localhost:8080'
+        }
+    }
 })

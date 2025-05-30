@@ -3,12 +3,13 @@ package middleware
 import (
 	"context"
 	"fmt"
-	"github.com/joho/godotenv"
-	"github.com/rs/zerolog/log"
 	"net/http"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/joho/godotenv"
+	"github.com/rs/zerolog/log"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -23,12 +24,6 @@ type Claims struct {
 
 // InitJWT loads the JWT secret from the environment and prepares it for signing tokens.
 func InitJWT() error {
-	err := godotenv.Load()
-	if err != nil {
-		log.Error().Err(err).Msg(".env file could not be loaded")
-		return fmt.Errorf("failed to load .env: %v", err)
-	}
-
 	jwtKey = []byte(os.Getenv("JWT_SECRET"))
 	if len(jwtKey) == 0 {
 		log.Fatal().Msg("JWT_SECRET is missing in the environment")
