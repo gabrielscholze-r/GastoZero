@@ -10,8 +10,6 @@ import {
     updatePlanAmout,
 } from "./Actions";
 import ExpenseList from './ExpenseList';
-
-import {useQueryClient} from "@tanstack/react-query";
 import PlanEdit from "./PlanEdit.jsx";
 import {usePlans} from "../../hooks/usePlans.jsx";
 import {toast} from "react-toastify";
@@ -52,8 +50,17 @@ export default function Plan({data}) {
 
     const loadExpenses = async (planId) => {
         const result = await getExpensesByPlan(planId);
-        setExpenses(result.data ?? []);
+        const expensesData = result.data ?? [];
+        setExpenses(expensesData);
+
+        const total = expensesData.reduce((acc, expense) => acc + expense.amount, 0);
+        setLocalData((prev) => ({
+            ...prev,
+            totalAmount: total,
+        }));
+
     };
+
 
     const loadCategories = async () => {
         const result = await getCategories();
@@ -184,7 +191,7 @@ export default function Plan({data}) {
                         </div>
                         {isEditingPlan && (
                             <PlanEdit setIsOpened={setIsEditingPlan} isOpened={isEditingPlan} data={localData}
-                                      setLocalData={setLocalData}/>
+                                      setLocalData={setLocalData} />
                         )}
                         <ExpenseList
                             isAdding={isAdding}
@@ -205,6 +212,7 @@ export default function Plan({data}) {
                             sortedExpenses={sortedExpenses}
                             tempList={tempList}
                             setTempList={setTempList}
+                            loadExpenses={loadExpenses}
                         />
 
                     </motion.div>

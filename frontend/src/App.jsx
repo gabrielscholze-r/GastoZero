@@ -73,7 +73,10 @@ function AppContent() {
                     />
                     <Route path="/login" element={<LoginPage/>}/>
                     <Route path="/register" element={<Register/>}/>
-                    <Route path="*" element={<NotFound/>}/>
+                    <Route path="*" element={
+                        <ProtectedRoute isAuthenticated={isAuthenticated}>
+                            <HomePage/>
+                        </ProtectedRoute>}/>
                     <Route path="/plan" element={
                         <ProtectedRoute isAuthenticated={isAuthenticated}>
                             <Plan data={plan}/>
@@ -81,7 +84,7 @@ function AppContent() {
                     }/>
                     <Route path="/reports" element={
                         <ProtectedRoute isAuthenticated={isAuthenticated}>
-                            <Reports />
+                            <Reports/>
                         </ProtectedRoute>
                     }/>
                 </Routes>

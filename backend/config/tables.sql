@@ -20,7 +20,7 @@ CREATE TABLE budget_plan
 CREATE TABLE category
 (
     id          SERIAL PRIMARY KEY,
-    name        TEXT NOT NULL
+    name        TEXT UNIQUE NOT NULL
 );
 CREATE TABLE expenses
 (

@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/joho/godotenv"
 	"github.com/rs/zerolog/log"
 
 	"github.com/golang-jwt/jwt/v5"

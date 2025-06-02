@@ -6,6 +6,7 @@ import (
 	"backend/repository"
 	"backend/routes"
 	"backend/service"
+	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"net/http"
@@ -13,7 +14,11 @@ import (
 )
 
 func main() {
-	// Configura saída do zerolog para o terminal com formato legível
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Error().Err(err).Msg("Erro ao carregar .env")
+	}
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger()
 
 	log.Info().Msg("Conectando ao banco de dados")

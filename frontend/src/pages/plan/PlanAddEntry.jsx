@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { addExpense, addNewCategory } from "./Actions";
-import { createPortal } from "react-dom";
+import { createPortal } from "react-dom"; // Já está importado
 import { toast } from "react-toastify";
 
 export default function PlanAddEntry({
@@ -23,6 +23,7 @@ export default function PlanAddEntry({
     const [showDropdown, setShowDropdown] = useState(false);
     const [filteredCategories, setFilteredCategories] = useState([]);
     const inputRef = useRef(null);
+    const [dropdownRect, setDropdownRect] = useState(null); // Estado para armazenar a posição do input
 
     useEffect(() => {
         const filtered = categories.filter((cat) =>
@@ -30,6 +31,13 @@ export default function PlanAddEntry({
         );
         setFilteredCategories(filtered);
     }, [categoryInput, categories]);
+
+    // Atualiza a posição do input para posicionar o portal
+    useEffect(() => {
+        if (inputRef.current && showDropdown) {
+            setDropdownRect(inputRef.current.getBoundingClientRect());
+        }
+    }, [showDropdown, categoryInput, filteredCategories]); // Dependências para recalcular a posição
 
     const onSubmit = async (data) => {
         let selectedCategory = categories.find((cat) => cat.name === categoryInput);
@@ -85,41 +93,52 @@ export default function PlanAddEntry({
                 )}
             </td>
 
-            <td className="p-2 w-[20%] relative">
-                <input
-                    type="text"
-                    placeholder="Category"
-                    value={categoryInput}
-                    onChange={(e) => {
-                        const value = e.target.value;
-                        setCategoryInput(value);
-                        setValue("category_input", value);
-                        setShowDropdown(true);
-                    }}
-                    onFocus={() => setShowDropdown(true)}
-                    onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
-                    className="p-1 w-full rounded bg-gray-700 border border-grayDark text-text"
-                    form="plan-entry-form"
-                    ref={inputRef}
-                />
-                {showDropdown && filteredCategories.length > 0 && (
-                    <ul className="absolute top-full left-0 w-full bg-bgdark border border-gold rounded shadow-lg max-h-40 overflow-y-auto z-50">
-                        {filteredCategories.map((cat) => (
-                            <li
-                                key={cat.id}
-                                className="p-2 opacity-80 hover:opacity-100 cursor-pointer text-text"
-                                onMouseDown={() => {
-                                    setCategoryInput(cat.name);
-                                    setValue("category_input", cat.name);
-                                    setShowDropdown(false);
-                                }}
-                            >
-                                {cat.name}
-                            </li>
-                        ))}
-                    </ul>
-                )}
+            <td className="p-2 w-[20%]">
+                <div className="relative z-50">
+                    <input
+                        type="text"
+                        placeholder="Category"
+                        value={categoryInput}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setCategoryInput(value);
+                            setValue("category_input", value);
+                            setShowDropdown(true);
+                        }}
+                        onFocus={() => setShowDropdown(true)}
+                        onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+                        className="p-1 w-full rounded bg-gray-700 border border-grayDark text-text"
+                        form="plan-entry-form"
+                        ref={inputRef}
+                    />
+                    {showDropdown && dropdownRect && createPortal( // Use createPortal aqui
+                        <ul
+                            className="absolute bg-bgdark border border-gold rounded shadow-lg max-h-40 overflow-y-auto z-[9999]" // Aumente o z-index
+                            style={{
+                                top: dropdownRect.bottom + window.scrollY, // Posiciona abaixo do input
+                                left: dropdownRect.left + window.scrollX, // Alinha com a esquerda do input
+                                width: dropdownRect.width, // Mesma largura do input
+                            }}
+                        >
+                            {filteredCategories.map((cat) => (
+                                <li
+                                    key={cat.id}
+                                    className="p-2 opacity-80 hover:opacity-100 cursor-pointer text-text"
+                                    onMouseDown={() => {
+                                        setCategoryInput(cat.name);
+                                        setValue("category_input", cat.name);
+                                        setShowDropdown(false);
+                                    }}
+                                >
+                                    {cat.name}
+                                </li>
+                            ))}
+                        </ul>,
+                        document.body // Renderiza diretamente no body
+                    )}
+                </div>
             </td>
+
 
             <td className="p-2 w-[15%]">
                 <input

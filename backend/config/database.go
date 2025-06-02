@@ -52,10 +52,9 @@ func ConnectDB() (*bun.DB, error) {
 
 	log.Info().Msg("Successfully connected to PostgreSQL using Bun")
 
-	// Run SQL script to create tables
+	// Try running the SQL script, but don't fail if there's an error
 	if err := runSchemaScript(db); err != nil {
-		log.Error().Err(err).Msg("Failed to run schema SQL script")
-		return nil, err
+		log.Warn().Err(err).Msg("Schema SQL script failed, continuing anyway")
 	}
 
 	return db, nil
@@ -69,11 +68,15 @@ func runSchemaScript(db *bun.DB) error {
 		return fmt.Errorf("failed to read SQL file: %v", err)
 	}
 
-	_, err = db.ExecContext(context.Background(), string(content))
+	log.Debug().Msg("Running SQL schema script...")
+
+	res, err := db.ExecContext(context.Background(), string(content))
 	if err != nil {
-		return fmt.Errorf("failed to execute SQL script: %v", err)
+		return fmt.Errorf("failed to execute SQL script: %w", err)
 	}
 
-	log.Info().Str("file", sqlPath).Msg("Schema SQL script executed successfully")
+	rowsAffected, _ := res.RowsAffected()
+	log.Info().Int64("rowsAffected", rowsAffected).Str("file", sqlPath).Msg("Schema SQL script executed successfully")
+
 	return nil
 }

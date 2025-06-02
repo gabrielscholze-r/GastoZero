@@ -1,40 +1,42 @@
-import React, {useState, useEffect} from 'react';
-import {MdClose, MdDelete, MdEdit, MdSave} from "react-icons/md";
+import React, { useState, useEffect } from 'react';
+import { MdClose, MdDelete, MdEdit, MdSave } from "react-icons/md";
 import PlanAddEntry from "./PlanAddEntry";
-import {updateExpense} from "./Actions";
+import {updateExpense, updatePlanAmout} from "./Actions";
 import { formatDate } from "../../util/util.js";
-import {toast} from "react-toastify";
-import {usePlans} from "../../hooks/usePlans.jsx";
+import { toast } from "react-toastify";
+import { usePlans } from "../../hooks/usePlans.jsx";
 
-export default function ExpenseList ({
-                                         isAdding,
-                                         isEditing,
-                                         isLoading,
-                                         setIsAdding,
-                                         setIsEditing,
-                                         error,
-                                         activeColumn,
-                                         sortDirection,
-                                         categories,
-                                         localData,
-                                         setCategories,
-                                         handleAddExpense,
-                                         handleDeleteExpense,
-                                         handleHeaderClick,
-                                         sortedExpenses: propsSortedExpenses,
-                                         tempList,
-                                         setTempList,
-                                         handleTempList,
-                                     })  {
+export default function ExpenseList({
+                                        isAdding,
+                                        isEditing,
+                                        isLoading,
+                                        setIsAdding,
+                                        setIsEditing,
+                                        error,
+                                        activeColumn,
+                                        sortDirection,
+                                        categories,
+                                        localData,
+                                        setCategories,
+                                        handleAddExpense,
+                                        handleDeleteExpense,
+                                        handleHeaderClick,
+                                        sortedExpenses: propsSortedExpenses,
+                                        tempList,
+                                        setTempList,
+                                        handleTempList,
+                                        loadExpenses
+                                    }) {
     const [editingExpense, setEditingExpense] = useState(null);
     const [editForm, setEditForm] = useState({
         date: '',
         description: '',
+        category_id: '',
         category_name: '',
         amount: '',
         is_recurring: false
     });
-    const {refetch}= usePlans()
+    const { refetch } = usePlans();
     const [localSortedExpenses, setLocalSortedExpenses] = useState(propsSortedExpenses);
 
     useEffect(() => {
@@ -50,28 +52,45 @@ export default function ExpenseList ({
             toast.info("Please finish editing the current expense first");
             return;
         }
+        const formattedDate = new Date(expense.date).toISOString().split('T')[0];
         setEditingExpense(expense.id);
         setEditForm({
-            date: expense.date,
-            description: expense.description,
-            category_name: expense.category_name,
-            amount: expense.amount,
-            is_recurring: expense.is_recurring
+            date: formattedDate,
+            description: expense.description || '',
+            category_name: expense.category_name || '',
+            category_id: expense.category_id || '',
+            amount: expense.amount?.toString().replace('.', ',') || '',
+            is_recurring: !!expense.is_recurring
         });
     };
 
     const handleSaveEdit = async (expenseId) => {
         try {
+            const originalExpense = localSortedExpenses.find(exp => exp.id === expenseId);
             const formattedAmount = parseFloat(editForm.amount.toString().replace(',', '.'));
-
             const updatedData = {
                 ...editForm,
-                amount: formattedAmount
+                amount: formattedAmount,
+                date: new Date(editForm.date).toISOString()
             };
 
-            const r = await updateExpense(expenseId, updatedData);
-            if (r) {
-                await refetch()
+            const updateSuccess = await updateExpense(expenseId, updatedData);
+
+            if (updateSuccess) {
+                setLocalSortedExpenses(prev =>
+                    prev.map(exp =>
+                        exp.id === expenseId
+                            ? { ...exp, ...updatedData }
+                            : exp
+                    )
+                );
+                const amountDiff = formattedAmount - originalExpense.amount;
+                if (amountDiff !== 0) {
+                    await updatePlanAmout(originalExpense.budget_id, amountDiff, true);
+                }
+
+                await loadExpenses(localData.id);
+                await refetch();
                 setEditingExpense(null);
                 toast.success("Expense updated successfully");
             } else {
@@ -83,12 +102,14 @@ export default function ExpenseList ({
         }
     };
 
+
     const handleCancelEdit = () => {
         setEditingExpense(null);
         setEditForm({
             date: '',
             description: '',
             category_name: '',
+            category_id: '',
             amount: '',
             is_recurring: false
         });
@@ -158,16 +179,16 @@ export default function ExpenseList ({
                     <thead>
                     <tr className="bg-primary text-white cursor-pointer">
                         {[
-                            {key: "date", label: "Date"},
-                            {key: "description", label: "Description"},
-                            {key: "category_name", label: "Category"},
-                            {key: "amount", label: "Amount"},
-                            {key: "is_recurring", label: "Recurring"},
+                            { key: "date", label: "Date" },
+                            { key: "description", label: "Description" },
+                            { key: "category_name", label: "Category" },
+                            { key: "amount", label: "Amount" },
+                            { key: "is_recurring", label: "Recurring" },
                             isEditing
-                                ? {key: "delete", label: "Delete"}
-                                : {key: "actions", label: "Actions"},
+                                ? { key: "delete", label: "Delete" }
+                                : { key: "actions", label: "Actions" },
                         ].map(
-                            ({key, label}) =>
+                            ({ key, label }) =>
                                 key &&
                                 label && (
                                     <th
@@ -182,8 +203,8 @@ export default function ExpenseList ({
                                         {label}
                                         {activeColumn === key && (
                                             <span className="ml-1">
-                                                {sortDirection === "asc" ? "▲" : "▼"}
-                                            </span>
+                                                    {sortDirection === "asc" ? "▲" : "▼"}
+                                                </span>
                                         )}
                                     </th>
                                 )
@@ -218,7 +239,7 @@ export default function ExpenseList ({
                                         <input
                                             type="date"
                                             value={editForm.date}
-                                            onChange={(e) => setEditForm({...editForm, date: e.target.value})}
+                                            onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
                                             className="bg-gray-700 text-white px-2 py-1 rounded w-full"
                                         />
                                     ) : formatDate(expense.date)}
@@ -228,7 +249,7 @@ export default function ExpenseList ({
                                         <input
                                             type="text"
                                             value={editForm.description}
-                                            onChange={(e) => setEditForm({...editForm, description: e.target.value})}
+                                            onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
                                             className="bg-gray-700 text-white px-2 py-1 rounded w-full"
                                         />
                                     ) : expense.description}
@@ -237,7 +258,13 @@ export default function ExpenseList ({
                                     {isEditingThis ? (
                                         <select
                                             value={editForm.category_name}
-                                            onChange={(e) => setEditForm({...editForm, category_name: e.target.value})}
+                                            onChange={(e) =>
+                                                setEditForm({
+                                                    ...editForm,
+                                                    category_id: Number(e.target.value),
+                                                    category_name: categories.find(cat => cat.id === Number(e.target.value))?.name || ''
+                                                })
+                                            }
                                             className="bg-gray-700 text-white px-2 py-1 rounded w-full"
                                         >
                                             {categories.map(cat => (
@@ -255,7 +282,7 @@ export default function ExpenseList ({
                                             onInput={(e) => {
                                                 e.target.value = e.target.value.replace(/[^\d.,]/g, "");
                                             }}
-                                            onChange={(e) => setEditForm({...editForm, amount: e.target.value})}
+                                            onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })}
                                             className="bg-gray-700 text-white px-2 py-1 rounded w-full"
                                         />
                                     ) : `$ ${Number(expense.amount).toFixed(2)}`}
@@ -265,7 +292,7 @@ export default function ExpenseList ({
                                         <input
                                             type="checkbox"
                                             checked={editForm.is_recurring}
-                                            onChange={(e) => setEditForm({...editForm, is_recurring: e.target.checked})}
+                                            onChange={(e) => setEditForm({ ...editForm, is_recurring: e.target.checked })}
                                             className="w-4 h-4"
                                         />
                                     ) : expense.is_recurring ? "Yes" : "No"}
@@ -282,7 +309,7 @@ export default function ExpenseList ({
                                                 expense.amount
                                             )}
                                         >
-                                            <MdDelete size={16} color="#ffffff"/>
+                                            <MdDelete size={16} color="#ffffff" />
                                         </div>
                                     ) : isEditingThis ? (
                                         <div className="flex gap-2 justify-center">
@@ -306,7 +333,8 @@ export default function ExpenseList ({
                                                 editingExpense || isAdding || isEditing
                                                     ? "bg-gray-600 cursor-not-allowed hover:opacity-100"
                                                     : "bg-blue-600 cursor-pointer"
-                                            }`}                                            disabled={!!editingExpense || isAdding || isEditing}
+                                            }`}
+                                            disabled={!!editingExpense || isAdding || isEditing}
                                         >
                                             <MdEdit size={16} />
                                         </button>
@@ -320,4 +348,4 @@ export default function ExpenseList ({
             </div>
         </div>
     );
-};
+}

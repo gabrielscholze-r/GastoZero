@@ -99,7 +99,7 @@ export default function Register() {
 
             <button
                 type="submit"
-                className="w-full py-3 bg-bgdark transition-all text-text font-bold text-lg rounded-lg cursor-pointer hover:opacity-80"
+                className="w-full py-3 bg-bgdark transition-all text-white font-bold text-lg rounded-lg cursor-pointer hover:opacity-80"
             >
               Sign in
             </button>
