@@ -39,7 +39,7 @@ export default function ProtectedSidebar({ setIsOpen, setPlan, selectedPlan }) {
     <>
       <NavLink
         to="/home"
-        className="flex items-center gap-2 text-xl font-bold transition hover:opacity-70"
+        className="flex items-center gap-2 text-xl font-bold transition hover:opacity-70 cursor-pointer"
         onClick={() => setIsOpen(false)}
       >
         <MdOutlineAccountCircle className="text-2xl" />
@@ -48,7 +48,7 @@ export default function ProtectedSidebar({ setIsOpen, setPlan, selectedPlan }) {
 
       <div>
         <button
-          className="w-full flex items-center justify-between text-xl font-bold transition hover:opacity-70 py-1"
+          className="w-full flex items-center justify-between text-xl font-bold transition hover:opacity-70 py-1 cursor-pointer"
           onClick={() => setOpenPlan(!openPlan)}
         >
           <div className="flex items-center gap-2">
@@ -69,7 +69,7 @@ export default function ProtectedSidebar({ setIsOpen, setPlan, selectedPlan }) {
           }`}
         >
           <button
-            className="w-full text-left flex items-center gap-2 text-lg font-medium py-1 transition hover:opacity-70"
+            className="w-full text-left flex items-center gap-2 text-lg font-medium py-1 transition hover:opacity-70 cursor-pointer"
             onClick={() => setShowModal(true)}
           >
             <MdAdd className="text-xl" /> Add plan
@@ -79,7 +79,7 @@ export default function ProtectedSidebar({ setIsOpen, setPlan, selectedPlan }) {
               <button
                 key={planItem.id}
                 onClick={() => handleSetPlan(planItem)}
-                className={`w-full text-left py-1 text-lg font-medium transition hover:opacity-70
+                className={`w-full text-left py-1 text-lg font-medium transition hover:opacity-70 cursor-pointer
                                 ${
                                   planItem.id === selectedPlan?.id
                                     ? "underline font-bold"
@@ -95,7 +95,7 @@ export default function ProtectedSidebar({ setIsOpen, setPlan, selectedPlan }) {
 
       <NavLink
         to="/reports"
-        className="flex items-center gap-2 text-xl font-bold transition hover:opacity-70"
+        className="flex items-center gap-2 text-xl font-bold transition hover:opacity-70 cursor-pointer"
         onClick={() => setIsOpen(false)}
       >
         <span className="text-2xl">📊</span>
@@ -103,7 +103,7 @@ export default function ProtectedSidebar({ setIsOpen, setPlan, selectedPlan }) {
       </NavLink>
 
       {showModal && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-blue-dark/80 px-4">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 px-4">
           <div className="bg-containerbg text-textcontainerbg p-6 rounded-lg max-w-md w-full shadow-lg h-max z-[10000]">
             <h2 className="text-2xl font-bold mb-4 border-b pb-2 border-textcontainerbg border-opacity-20">
               New Plan
@@ -152,13 +152,13 @@ export default function ProtectedSidebar({ setIsOpen, setPlan, selectedPlan }) {
                     reset();
                     setShowModal(false);
                   }}
-                  className="px-6 py-2 rounded-lg bg-gray-600 hover:bg-red-800 transition duration-200 text-textcontainerbg font-semibold shadow-md"
+                  className="px-6 py-2 rounded-lg bg-gray-600 hover:opacity-80 transition duration-200 text-textcontainerbg font-semibold shadow-md cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 transition duration-200 text-textcontainerbg font-semibold shadow-md"
+                  className="px-6 py-2 rounded-lg bg-blue-600 hover:opacity-80 transition duration-200 text-textcontainerbg font-semibold shadow-md cursor-pointer"
                 >
                   Save
                 </button>

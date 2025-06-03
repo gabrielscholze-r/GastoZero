@@ -6,7 +6,7 @@ import { Slide, toast } from "react-toastify";
 import { FaSpinner } from "react-icons/fa";
 import ProtectedSidebar from "./ProtectedSidebar.jsx";
 import { MdClose, MdMenu, MdLogout } from "react-icons/md";
-
+import { queryClient } from '@tanstack/react-query'; 
 export default function Sidebar({ isOpen, setIsOpen, setPlan, selectedPlan }) {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -21,6 +21,8 @@ export default function Sidebar({ isOpen, setIsOpen, setPlan, selectedPlan }) {
 
   const handleLogout = () => {
     Cookies.remove("authToken");
+    Cookies.remove("graphType");
+    queryClient.invalidateQueries(['plans']);
     toast.info(
       <div className="flex items-center gap-2">
         <FaSpinner className="animate-spin" />
@@ -53,14 +55,22 @@ export default function Sidebar({ isOpen, setIsOpen, setPlan, selectedPlan }) {
     <div className="space-y-4">
       <NavLink
         to="/login"
-        className="block text-xl font-semibold hover:text-opacity-80 transition duration-200"
+        className={({ isActive }) =>
+          `block text-xl font-semibold cursor-pointer hover:opacity-85 transition-opacity0 ${
+            isActive ? "underline font-bold" : ""
+          }`
+        }
         onClick={() => setIsOpen(false)}
       >
         Login
       </NavLink>
       <NavLink
         to="/register"
-        className="block text-xl font-semibold hover:text-opacity-80 transition duration-200"
+        className={({ isActive }) =>
+          `block text-xl font-semibold cursor-pointer hover:opacity-85 transition-opacity ${
+            isActive ? "underline font-bold" : ""
+          }`
+        }
         onClick={() => setIsOpen(false)}
       >
         Register
@@ -149,7 +159,7 @@ export default function Sidebar({ isOpen, setIsOpen, setPlan, selectedPlan }) {
               id="desktop-theme-select"
               value={theme}
               onChange={(e) => toggleTheme(e.target.value)}
-              className="w-full bg-textcontainerbg text-primary font-medium px-4 py-2 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-gold appearance-none"
+              className="w-full bg-textcontainerbg text-primary font-medium px-4 py-2 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-gold appearance-none cursor-pointer hover:opacity-85 transition-opacity"
             >
               <option value="light">Light</option>
               <option value="dark">Dark</option>
